@@ -195,7 +195,7 @@ A few general points about protocol files:
 				change in time due to production and consumption by the biofilm and by dilution
 				at the rate 'D' -->
 			<param name="isConstant">false</param>
-			<param name="D" unit="h-1">0.6</param>
+			<param name="D" unit="h-1">0.1</param>
 
 			<!-- List the solutes that reside in this bulk compartment, along with the initial
 				concentration ('Sbulk') and influent concentration ('Sin'). Additionally, you may
@@ -212,16 +212,16 @@ A few general points about protocol files:
 				<param name="Sin" unit="g.L-1">10e-3</param>
 			</solute>
 			<solute name="aip">
-				<param name="Sbulk" unit="g.L-1">6e-3</param>
-				<param name="Sin" unit="g.L-1">6e-3</param>
+				<param name="Sbulk" unit="g.L-1">1e-6</param>
+				<param name="Sin" unit="g.L-1">1e-6</param>
 			</solute>
 			<solute name="acid">
 				<param name="Sbulk" unit="g.L-1">0.0</param>
 				<param name="Sin" unit="g.L-1">0.0</param>
 			</solute>
 			<solute name="solvent">
-				<param name="Sbulk" unit="g.L-1">10e-3</param>
-				<param name="Sin" unit="g.L-1">10e-3</param>
+				<param name="Sbulk" unit="g.L-1">0</param>
+				<param name="Sin" unit="g.L-1">0</param>
 			</solute>
 		</bulk>
 
