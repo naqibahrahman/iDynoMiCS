@@ -14,7 +14,8 @@ import utils.XMLParser;
  * @author Naqibah Rahman
  */
 
-public class ClostridiumParam extends GeneRegBacParam {
+public class ClostridiumParam extends GeneRegBacParam
+{
 	
 	/** clostridium default parameters 
 	 * 
@@ -126,8 +127,8 @@ public class ClostridiumParam extends GeneRegBacParam {
 	public Double SporulationLag = 0.0;
 	
 	//Threshold
-	public Double Spo0Athresh = 10.0;
-	public Double SporeThresh = 10.0;
+	public Double Spo0Athresh = 6000.0;
+	public Double SporeThresh = 6000.0;
 	
 	//Probability
 	public Double ProbParam = 0.5;

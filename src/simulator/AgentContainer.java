@@ -323,19 +323,9 @@ public class AgentContainer
 			if ( ! Simulator.isChemostat )
 				followPressure();
 			
-			//System.out.print("[");
-			//int stepSize = (int) (agentList.size()/20.0);
-			//int counter = 0;
 			for ( int i = 0; i < agentList.size(); i++ )
-			{
 				agentList.get(i).step();
-				//if ( i > counter )
-				//{
-				//	counter += stepSize;
-				//	System.out.print("#");
-				//}
-			}
-			//System.out.println("]");
+			
 			/*
 			 * TODO Rob 16Apr2015: Java is complaining about
 			 * "java.util.ConcurrentModificationException"

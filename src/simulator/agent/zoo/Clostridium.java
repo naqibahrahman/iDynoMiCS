@@ -192,9 +192,7 @@ public class Clostridium extends GeneRegBac {
 		Matrix y = new Matrix(this._proteinLevels.length, 1);
 		for ( int i = 0; i < this._proteinLevels.length; i++ )
 			y.set(i, 0, this._proteinLevels[i]);
-		System.out.print("starting regulation solver...");
 		y = this._regulationSolver.solve(y, _agentGrid.AGENTTIMESTEP);
-		System.out.println("done");
 		for ( int i = 0; i < this._proteinLevels.length; i++ )
 			this._proteinLevels[i] = y.get(i, 0);
 
@@ -235,10 +233,31 @@ public class Clostridium extends GeneRegBac {
 		this._aipGrid = aSim.getSolute("aip");
 		this._acidGrid = aSim.getSolute("acid");
 		this._solventGrid = aSim.getSolute("solvent");
-		
-		
 	}
 	
+	@Override
+	public void initFromResultFile(Simulator aSim, String[] singleAgentData) 
+	{
+		/*
+		 * As from protocol file.
+		 */
+		this._aipGrid = aSim.getSolute("aip");
+		this._acidGrid = aSim.getSolute("acid");
+		this._solventGrid = aSim.getSolute("solvent");
+		
+		/*
+		 * Set the spore status variable.
+		 */
+		int iDataStart = singleAgentData.length - 1;
+		this._sporeStatus = singleAgentData[iDataStart];
+		/*
+		 * Now go up the hierarchy with the rest of the data.
+		 */
+		String[] remainingSingleAgentData = new String[iDataStart];
+		for ( int i = 0; i < iDataStart; i++ )
+			remainingSingleAgentData[i] = singleAgentData[i];
+		super.initFromResultFile(aSim, remainingSingleAgentData);
+	}
 	
 	private void updateExternal()
 	{
@@ -829,4 +848,21 @@ public class Clostridium extends GeneRegBac {
 		return (ClostridiumParam) _speciesParam;
 	}
 	
+	@Override
+	public StringBuffer sendHeader()
+	{
+		// return the header file for this agent's values after sending those for super
+		StringBuffer tempString = super.sendHeader();
+		tempString.append(",sporeStatus");
+		return tempString;
+	}
+	
+	@Override
+	public StringBuffer writeOutput()
+	{
+		// write the data matching the header file
+		StringBuffer tempString = super.writeOutput();
+		tempString.append(","+this._sporeStatus);
+		return tempString;
+	}
 }

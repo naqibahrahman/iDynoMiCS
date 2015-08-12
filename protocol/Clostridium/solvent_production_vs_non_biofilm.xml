@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idynomics>
+
+	<simulator>
+        <param name="quietMode">false</param>
+		<param name="restartPreviousRun">false</param>
+		<param name="randomSeed">42</param>
+		<param name="outputPeriod" unit="hour">1.0</param>
+		<param name="checkForReleaseUpdate">true</param>
+		<timeStep>
+			<param name="adaptive">false</param>
+			<param name="timeStepIni" unit="hour">0.05</param>
+			<param name="timeStepMin" unit="hour">0.05</param>
+			<param name="timeStepMax" unit="hour">1.0</param>
+			<param name="endOfSimulation" unit="day">1.0</param>
+		</timeStep>
+		<param name="attachment">onetime</param>
+		<param name="chemostat">false</param>
+		<param name="agentTimeStep" unit="hour">0.05</param>
+        <param name="invComp">false</param> 
+	</simulator>
+
+	<input>
+		<param name="useAgentFile">false</param>
+		<param name="inputAgentFileURL">agent_State(last).xml</param>
+		<param name="useBulkFile">false</param>
+		<param name="inputBulkFileURL">env_Sum(last).xml</param>
+	</input>
+
+	<solute domain="biofilm" name="glucose">
+		<param name="diffusivity" unit="m2.day-1">2e-4</param>
+	</solute>
+	<solute domain="biofilm" name="aip">
+		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+	</solute>
+	<solute domain="biofilm" name="acid">
+		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+	</solute>
+	<solute domain="biofilm" name="solvent">
+		<param name="diffusivity" unit="m2.day-1">1e-4</param>
+	</solute>
+
+	<particle name="biomass">
+		<param name="density" unit="g.L-1">150.0</param>
+	</particle>
+	<particle name="spore">
+		<param name="density" unit="g.L-1">150.0</param>
+	</particle>
+
+	<world>
+		<bulk name="bulk">
+
+			<!-- If 'isConstant' is set to false, then solute concentrations in the bulk will
+				change in time due to production and consumption by the biofilm and by dilution
+				at the rate 'D' -->
+			<param name="isConstant">true</param>
+			<param name="D" unit="h-1">0.6</param>
+
+			<!-- List the solutes that reside in this bulk compartment, along with the initial
+				concentration ('Sbulk') and influent concentration ('Sin'). Additionally, you may
+				specify the 'Spulse' and 'pulseRate' parameters to spike the concentration to the
+				given value at the given rate.
+
+				Concentrations should be given as g.L-1 ( = kg.m-3 = fg.um-3 ).
+				
+				The 'pressure' solute parameters should be left as-is.
+			-->
+
+			<solute name="glucose">
+				<param name="Sbulk" unit="g.L-1">10e-3</param>
+				<param name="Sin" unit="g.L-1">10e-3</param>
+			</solute>
+			<solute name="aip">
+				<param name="Sbulk" unit="g.L-1">1e-6</param>
+				<param name="Sin" unit="g.L-1">1e-6</param>
+			</solute>
+			<solute name="acid">
+				<param name="Sbulk" unit="g.L-1">0.0</param>
+				<param name="Sin" unit="g.L-1">0.0</param>
+			</solute>
+			<solute name="solvent">
+				<param name="Sbulk" unit="g.L-1">0.0</param>
+				<param name="Sin" unit="g.L-1">0.0</param>
+			</solute>
+		</bulk>
+
+		<!-- The computation domain is a physical region that will contain the biofilm,
+			and has a more complex setup. -->
+
+		<computationDomain name="biofilm">
+			<grid nDim="2" nI="33" nJ="33" nK="1"/>
+			<param name="resolution" unit="um">4.0</param>
+			<param name="boundaryLayer" unit="um">32.0</param>
+			<param name="biofilmDiffusivity">0.8</param>
+			<param name="specificArea" unit="m2.m-3">80</param>
+			
+			<boundaryCondition class="BoundaryZeroFlux" name="y0z">
+				<shape class="Planar">
+					<param name="pointIn" i="-1" j="0" k="0"/>
+					<param name="vectorOut" i="-1" j="0" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryBulk" name="yNz">
+				<param name="activeForSolute">yes</param>
+				<param name="bulk">bulk</param>
+				<shape class="Planar">
+					<param name="pointIn" i="33" j="0" k="0"/>
+					<param name="vectorOut" i="1" j="0" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryCyclic" name="x0z">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="-1" k="0"/>
+					<param name="vectorOut" i="0" j="-1" k="0"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="33" k="0"/>
+					<param name="vectorOut" i="0" j="1" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryCyclic" name="x0y">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="-1"/>
+					<param name="vectorOut" i="0" j="0" k="-1"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="1"/>
+					<param name="vectorOut" i="0" j="0" k="1"/>
+				</shape>
+			</boundaryCondition>
+		</computationDomain>
+	</world>
+
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MyGlycolysis">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="acid" unit="g.g-1">1.587</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">1.0</param>
+	
+		</yield>
+	</reaction>
+
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySolventogenesis">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="solvent" unit="g.g-1">1.587</param>
+			<param name="acid" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">1.0</param>
+			
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySporeProduction1">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="spore" class="ReactionFactor" name="MySporeProduction2">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+
+	<solver class="Solver_multigrid" name="solutes" domain="biofilm">
+		<param name="active">true</param>
+		<param name="preStep">150</param>
+		<param name="postStep">150</param>
+		<param name="coarseStep">1500</param>
+		<param name="nCycles">5</param>
+		<reaction name="MySolventogenesis"/>
+		<reaction name="MySporeProduction1"/>
+		<reaction name="MyGlycolysis"/>
+		<reaction name="MySporeProduction2"/>
+	</solver>
+
+	<agentGrid>
+		<param name="computationDomain">biofilm</param>
+		<param name="resolution" unit="um">4.0</param>
+		<detachment class="DS_Quadratic">
+			<param name="kDet" unit="um-1.hour-1">1e-4</param>
+			<param name="maxTh" unit="um">100.0</param>
+		</detachment>
+		<param name="erosionMethod">false</param>
+		<param name="sloughDetachedBiomass">true</param>
+		<param name="shovingMaxNodes">2e6</param>
+		<param name="shovingFraction">0.025</param>
+		<param name="shovingMaxIter">250</param>
+		<param name="shovingMutual">true</param>
+	</agentGrid>
+	
+	
+	<species class="Clostridium" name="SolventProducer">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<param name="computationDomain">biofilm</param>
+		<param name="distMethod">true</param>
+		<param name="divRadius" unit="um">2.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.2</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<param name="shoveFactor" unit="um">1.15</param>
+		<param name="shoveLimit" unit="um">0.0</param>
+		
+		<param name="hmax">1e-4</param>
+
+		<reaction name="MyGlycolysis" status="active"/>
+		<reaction name="MySolventogenesis" status="inactive"/>
+		<reaction name="MySporeProduction1" status="inactive"/>
+		<reaction name="MySporeProduction2" status="inactive"/>
+		
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="MySporeProduction1" status="active"/>
+				<reaction name="MySporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesis>
+				<reaction name="MySolventogenesis" status="active"/>
+			</solventogenesis>
+		</reactionSwitch>
+
+		<initArea number="10">
+			<param name="birthday" unit="hour">0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="128.0" z="0.0"/>
+		</initArea>
+	</species>
+
+	<species class="Clostridium" name="NonProducer">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<param name="computationDomain">biofilm</param>
+		<param name="distMethod">true</param>
+		<param name="divRadius" unit="um">2.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.1</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<param name="shoveFactor" unit="um">1.15</param>
+		<param name="shoveLimit" unit="um">0.0</param>
+		
+		<param name="hmax">1e-4</param>
+		
+		<reaction name="MyGlycolysis" status="active"/>
+		<reaction name="MySolventogenesis" status="inactive"/>
+		<reaction name="MySporeProduction1" status="inactive"/>
+		<reaction name="MySporeProduction2" status="inactive"/>
+
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="MySporeProduction1" status="active"/>
+				<reaction name="MySporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesis>
+				<reaction name="MySolventogenesis" status="active"/>
+			</solventogenesis>
+		</reactionSwitch>
+
+		<initArea number="10">
+			<param name="birthday" unit="hour">0.0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="128.0" z="0.0"/>
+		</initArea>
+	</species>
+</idynomics>
