@@ -1,12 +1,10 @@
 package simulator.agent.zoo;
 
-import java.util.ArrayList;
-
 import Jama.Matrix;
+
 import idyno.SimTimer;
 import simulator.Simulator;
 import simulator.SoluteGrid;
-import simulator.agent.LocatedAgent;
 import utils.ExtraMath;
 import utils.XMLParser;
 
@@ -18,7 +16,6 @@ public class Clostridium extends GeneRegBac {
 	
 	private Double _aipConc;
 	private Double _acidConc;
-	private Double _solventConc;
 	
 	private String _sporeStatus = "noSpore";
 	
@@ -140,7 +137,7 @@ public class Clostridium extends GeneRegBac {
 		/*
 		 * This is specific to Clostridium!
 		 */
-		if ( ExtraMath.getUniRandDbl() < getSpeciesParam().ProbParam)
+		if ( ExtraMath.getUniRandDbl() < getSpeciesParam().sporeProb)
 			baby._sporeStatus = "canSpore";
 		else
 			baby._sporeStatus = "noSpore";
@@ -160,7 +157,7 @@ public class Clostridium extends GeneRegBac {
 		 */
 		if ( this._sporeStatus.equals("sporulating") )
 		{
-			if ( this.particleMass[1] >= getSpeciesParam().SporeThresh) 
+			if ( this.particleMass[1] >= getSpeciesParam().sporeThresh) 
 			{
 				// turn off all reactions
 		
@@ -170,15 +167,6 @@ public class Clostridium extends GeneRegBac {
 				 * 
 				 */
 				this._sporeStatus = "spore";
-
-				// set all protein to zero
-				//for ( int i = 0; i < _proteinLevels.length; i++ )
-				//	_proteinLevels[i] = 0.0;
-				
-						
-				//turn on lysis
-				
-				
 				return;
 			}
 			
@@ -198,7 +186,6 @@ public class Clostridium extends GeneRegBac {
 
 		checkSpo0A();
 		secretesAIP();
-		solventogenesis();
 		updateExternal();
 		/*
 		 * Compute mass growth over all compartments.
@@ -263,7 +250,7 @@ public class Clostridium extends GeneRegBac {
 	{
 		_aipConc = this._aipGrid.getValueAt(this._location);
 		_acidConc = this._acidGrid.getValueAt(this._location);
-		_solventConc = this._solventGrid.getValueAt(this._location);
+		//_solventConc = this._solventGrid.getValueAt(this._location);
 	}
 	
 	private Double activate(Double c, Double B, Double U, Double factor)
@@ -801,27 +788,11 @@ public class Clostridium extends GeneRegBac {
 		_aipGrid.setValueAt(rate, this._location);
 	}
 	
-	public void solventogenesis()
-	{
-		Double SAP = _proteinLevels[1]*this._volume/_aipGrid.getVoxelVolume();
-		
-		Double mu = getSpeciesParam().mu_i / (getSpeciesParam().mu_e + getSpeciesParam().mu_i);
-		
-		Double rate = mu * getSpeciesParam().rho * SAP * _acidConc;
-		
-		rate *= SimTimer.getCurrentTimeStep();
-	
-		Double solConc = Math.max(_solventConc + rate, 0.0);
-		Double acConc = Math.max(_acidConc - rate, 0.0);
-		
-		_solventGrid.setValueAt(solConc, this._location);
-		_acidGrid.setValueAt(acConc, this._location);
-	}
 	
 	public void checkSpo0A()
 	{
 		Double SAP = this._proteinLevels[1];
-		if ( SAP > getSpeciesParam().Spo0Athresh )
+		if ( SAP > getSpeciesParam().spo0APthresh )
 		{
 			for ( int aReac : getSpeciesParam().offAllReactions )
 				switchOffreaction(allReactions[aReac]);
@@ -835,8 +806,6 @@ public class Clostridium extends GeneRegBac {
 				 */
 				for ( int aReac : getSpeciesParam().onSporulation )
 					switchOnReaction(allReactions[aReac]);
-				
-				
 				this._sporeStatus = "sporulating";
 			}
 		}

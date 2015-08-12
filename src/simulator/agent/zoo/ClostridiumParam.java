@@ -1,11 +1,9 @@
 package simulator.agent.zoo;
 
 import java.util.ArrayList;
-
 import org.jdom.Element;
 
 import simulator.Simulator;
-import simulator.SoluteGrid;
 import utils.XMLParser;
 
 /**
@@ -16,9 +14,8 @@ import utils.XMLParser;
 
 public class ClostridiumParam extends GeneRegBacParam
 {
-	
-	/** clostridium default parameters 
-	 * 
+	/** 
+	 * Clostridium default parameters
 	 */
 	
 	protected ArrayList<Integer> onSporulation;
@@ -26,7 +23,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	protected ArrayList<Integer> onSolventogenesis;
 	
 	// Production 
-	public Double c_H = 0.000008;
+	public Double c_H = 8.0e-6;
 	public Double c_K = 0.1;
 	public Double c_agr_l = 0.4;
 	public Double c_SA_l = 0.4;
@@ -81,17 +78,23 @@ public class ClostridiumParam extends GeneRegBacParam
 	public Double lambda_PhP = 0.002;
 	public Double lambda_C = 0.002;
 	
-	// Autophosphorylation
+	/*
+	 * Autophosphorylation (units s-1)
+	 */
 	public Double alpha = 0.1;
 	
-	// Phosphotransfer
+	/*
+	 * Phosphotransfer (units nM-1 s-1)
+	 */
 	public Double phi_KP_SA = 1.0e-6;
 	public Double phi_SAP_K = 1.0e-6;
 	public Double phi_AP_SA = 1.0e-6;
 	public Double phi_SAP_Ph = 1.0e-6;
 	public Double phi_RP_A = 1.0e-6;
 	
-	// Dephosphorylation
+	/*
+	 * Dephosphorylation (units s-1)
+	 */
 	public Double psi_AP = 0.0004;
 	public Double psi_KP = 0.0004;
 	public Double psi_SAP = 0.0004;
@@ -104,34 +107,30 @@ public class ClostridiumParam extends GeneRegBacParam
 	// Movement to cell membrane
 	public Double mu_agr = 1.0;
 	
-	// Growth
-	public Double r = 1.67516e-4;
-	public Double kappa = 7.29057e+8;
-	
-	//Cell death
-	public Double delta_H = 1.03e-12;
-	public Double delta_Ha = 1.03e-12;
-	public Double delta_Sv = 9.0e-13;
-	public Double delta_Sva = 9.0e-13;
-	
-	// Spore formation
-	public Double xi = 2.0e-10;
 	
 	// Acid conversion
-	public Double rho = 2.0e-8;
+	/*
+	 * No longer need this, as we now switch on a reaction defined in the
+	 * protocol file.
+	 */
+	//public Double rho = 2.0e-8;
 	
-	// Scaling factor
-	public Double Sf = 1e-8;
+	/**
+	 * Threshold intracellular Spo0A~P concentration triggering
+	 * solventogenesis and/or sporulation.
+	 */
+	public Double spo0APthresh = 6000.0;
 	
-	// Sporulation
-	public Double SporulationLag = 0.0;
+	/**
+	 * Threshold spore mass (in fg) triggering the end of sporulation.
+	 */
+	public Double sporeThresh = 6000.0;
 	
-	//Threshold
-	public Double Spo0Athresh = 6000.0;
-	public Double SporeThresh = 6000.0;
-	
-	//Probability
-	public Double ProbParam = 0.5;
+	/**
+	 * Probability that a newly-created daughter cell will sporulate if the 
+	 * spo0A~P threshold is ever reached.
+	 */
+	public Double sporeProb = 0.5;
 	
 	public ClostridiumParam()
 	{
@@ -143,8 +142,6 @@ public class ClostridiumParam extends GeneRegBacParam
 	{
 		super.init(aSim,aSpeciesRoot,speciesDefaults);
 		Double value;
-		
-
 		
 		// Production
 		
@@ -349,62 +346,22 @@ public class ClostridiumParam extends GeneRegBacParam
 		value = getSpeciesParameterDouble("mu_agr", aSpeciesRoot, speciesDefaults);
 		mu_agr = Double.isNaN(value) ? mu_agr : value;
 		
-		// Growth
-		
-		value = getSpeciesParameterDouble("r", aSpeciesRoot, speciesDefaults);
-		r = Double.isNaN(value) ? r : value;
-		
-		
-		value = getSpeciesParameterDouble("kappa", aSpeciesRoot, speciesDefaults);
-		kappa = Double.isNaN(value) ? kappa : value;
-		
-		// Cell death
-		
-		value = getSpeciesParameterDouble("delta_H", aSpeciesRoot, speciesDefaults);
-		delta_H = Double.isNaN(value) ? delta_H : value;
-		
-		
-		value = getSpeciesParameterDouble("delta_Ha", aSpeciesRoot, speciesDefaults);
-		delta_Ha = Double.isNaN(value) ? delta_Ha : value;
-		
-		
-		value = getSpeciesParameterDouble("delta_Sv", aSpeciesRoot, speciesDefaults);
-		delta_Sv = Double.isNaN(value) ? delta_Sv : value;
-		
-		
-		value = getSpeciesParameterDouble("delta_Sva", aSpeciesRoot, speciesDefaults);
-		delta_Sva = Double.isNaN(value) ? delta_Sva : value;
-		
-		// SPore formation
-		
-		value = getSpeciesParameterDouble("xi", aSpeciesRoot, speciesDefaults);
-		xi = Double.isNaN(value) ? xi : value;
 		
 		// Acid conversion
 		
-		value = getSpeciesParameterDouble("rho", aSpeciesRoot, speciesDefaults);
-		rho = Double.isNaN(value) ? rho : value;
-		
-		// Scaling factor
-		
-		value = getSpeciesParameterDouble("Sf", aSpeciesRoot, speciesDefaults);
-		Sf = Double.isNaN(value) ? Sf : value;
-		
-		// Sporulation Lag
-		
-		value = getSpeciesParameterDouble("SporulationLag", aSpeciesRoot, speciesDefaults);
-		SporulationLag = Double.isNaN(value) ? SporulationLag : value;
+		//value = getSpeciesParameterDouble("rho", aSpeciesRoot, speciesDefaults);
+		//rho = Double.isNaN(value) ? rho : value;
 		
 		//Threshold
 		value = getSpeciesParameterDouble("Spo0Athresh", aSpeciesRoot, speciesDefaults);
-		Spo0Athresh = Double.isNaN(value) ? Spo0Athresh : value;
+		spo0APthresh = Double.isNaN(value) ? spo0APthresh : value;
 		
 		value = getSpeciesParameterDouble("SporeThresh", aSpeciesRoot, speciesDefaults);
-		SporeThresh = Double.isNaN(value) ? SporeThresh : value;
+		sporeThresh = Double.isNaN(value) ? sporeThresh : value;
 		
 		//Probability
 		value = getSpeciesParameterDouble("ProbParam", aSpeciesRoot, speciesDefaults);
-		ProbParam = Double.isNaN(value) ? ProbParam : value;
+		sporeProb = Double.isNaN(value) ? sporeProb : value;
 		
 		
 		

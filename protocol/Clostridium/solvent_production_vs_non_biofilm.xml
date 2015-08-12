@@ -235,14 +235,7 @@
 		<param name="shovingMutual">true</param>
 	</agentGrid>
 	
-	
-	<species class="Clostridium" name="SolventProducer">
-		<particle name="biomass">
-			<param name="mass" unit="fg">0.0</param>
-		</particle>
-		<particle name="spore">
-			<param name="mass" unit="fg">0.0</param>
-		</particle>
+	<speciesDefaults>
 		<param name="computationDomain">biofilm</param>
 		<param name="distMethod">true</param>
 		<param name="divRadius" unit="um">2.0</param>
@@ -256,10 +249,19 @@
 		
 		<param name="hmax">1e-4</param>
 
-		<reaction name="MyGlycolysis" status="active"/>
-		<reaction name="MySolventogenesis" status="inactive"/>
+		<reaction name="MyGlycolysis"       status="active"/>
+		<reaction name="MySolventogenesis"  status="inactive"/>
 		<reaction name="MySporeProduction1" status="inactive"/>
 		<reaction name="MySporeProduction2" status="inactive"/>
+	</speciesDefaults>
+	
+	<species class="Clostridium" name="SolventProducer">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
 		
 		<reactionSwitch>
 			<sporulating>
@@ -285,31 +287,13 @@
 		<particle name="spore">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
-		<param name="computationDomain">biofilm</param>
-		<param name="distMethod">true</param>
-		<param name="divRadius" unit="um">2.0</param>
-		<param name="divRadiusCV">0.1</param>
-		<param name="deathRadius" unit="um">0.1</param>
-		<param name="deathRadiusCV">0.1</param>
-		<param name="babyMassFrac">0.5</param>
-		<param name="babyMassFracCV">0.05</param>
-		<param name="shoveFactor" unit="um">1.15</param>
-		<param name="shoveLimit" unit="um">0.0</param>
-		
-		<param name="hmax">1e-4</param>
-		
-		<reaction name="MyGlycolysis" status="active"/>
-		<reaction name="MySolventogenesis" status="inactive"/>
-		<reaction name="MySporeProduction1" status="inactive"/>
-		<reaction name="MySporeProduction2" status="inactive"/>
-
 		<reactionSwitch>
 			<sporulating>
 				<reaction name="MySporeProduction1" status="active"/>
 				<reaction name="MySporeProduction2" status="active"/>
 			</sporulating>
 			<solventogenesis>
-				<reaction name="MySolventogenesis" status="active"/>
+				<reaction name="MyGlycolysis" status="active"/>
 			</solventogenesis>
 		</reactionSwitch>
 

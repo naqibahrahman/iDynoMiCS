@@ -912,9 +912,15 @@ public class Simulator
 			 * Read in the 'Species Defaults' from the parameter file.
 			 */
 			if ( _protocolFile.getChildElement("speciesDefaults") != null )
+			{
+				LogFile.writeLog("Using speciesDefaults");
 			    speciesDefaults = _protocolFile.getChildParser("speciesDefaults");
+			}
 			else
+			{
+				LogFile.writeLog("No speciesDefaults found");
 				speciesDefaults = new XMLParser(new Element("speciesDefaults"));
+			}
 			/*
 			 * Now iterate through all species specified in the protocol file.
 			 * Create a new species object for each specification and add to
