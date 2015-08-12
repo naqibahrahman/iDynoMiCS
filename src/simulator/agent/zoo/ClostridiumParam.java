@@ -126,8 +126,8 @@ public class ClostridiumParam extends GeneRegBacParam {
 	public Double SporulationLag = 0.0;
 	
 	//Threshold
-	public Double Spo0Athresh = 0.0;
-	public Double SporeThresh = 0.0;
+	public Double Spo0Athresh = 10.0;
+	public Double SporeThresh = 10.0;
 	
 	//Probability
 	public Double ProbParam = 0.5;

@@ -47,7 +47,6 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		return out;
 	}
 	
-	
 	public void initFromProtocolFile(Simulator aSim, XMLParser aSpeciesRoot)
 	{
 		super.initFromProtocolFile(aSim, aSpeciesRoot);
@@ -57,7 +56,23 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		_regulationSolver.setReferenceAgent(this);
 	}
 	
-	
+	@Override
+	public void initFromResultFile(Simulator aSim, String[] singleAgentData) 
+	{
+		/*
+		 * 
+		 */
+		int iDataStart = singleAgentData.length - this._numProtTypes;
+		for ( int i = 0; i < this._numProtTypes; i++ )
+			this._proteinLevels[i] = Double.parseDouble(singleAgentData[iDataStart+i]);
+		/*
+		 * Now go up the hierarchy with the rest of the data.
+		 */
+		String[] remainingSingleAgentData = new String[iDataStart];
+		for (int i=0; i<iDataStart; i++)
+			remainingSingleAgentData[i] = singleAgentData[i];
+		super.initFromResultFile(aSim, remainingSingleAgentData);
+	}
 	public abstract Matrix calc1stDeriv(Matrix levels);
 	
 	public abstract Matrix calcJacobian(Matrix levels);
@@ -68,4 +83,28 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		return (GeneRegBacParam) _speciesParam;
 	}
 	
+	
+	@Override
+	public StringBuffer sendHeader()
+	{
+		// return the header file for this agent's values after sending those for super
+		StringBuffer tempString = super.sendHeader();
+		
+		//all proteinNames - use loop
+		for ( int i = 0; i < this._numProtTypes; i++ )
+			tempString.append("," + this._proteinNames[i]);
+		return tempString;
+	}
+	
+	@Override
+	public StringBuffer writeOutput()
+	{
+		// write the data matching the header file
+		StringBuffer tempString = super.writeOutput();
+		
+		//TODO
+		for ( int i = 0; i < this._numProtTypes; i++ )
+			tempString.append("," + this._proteinLevels[i]);
+		return tempString;
+	}
 }

@@ -65,7 +65,7 @@ public class GeneRegSolver extends ODEsolver
 	 */
 	protected Matrix calc2ndDeriv(Matrix y, Double tdel, Matrix target)
 	{
-		this.numerical2ndDeriv(y, tdel, target);
+		target = this.numerical2ndDeriv(y, tdel, target);
 		return target;
 	}
 	

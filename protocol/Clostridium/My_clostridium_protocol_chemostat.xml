@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+#########################################################################
+ iDynoMiCS: individual-based Dynamics of Microbial Communities Simulator
+#########################################################################
+
+This is a sample protocol file for iDynoMiCS that is meant to show the many
+options that may be specified in defining a simulation. The model system
+in this example is a simple mixed autotroph/heterotroph population growing
+in a typical wastewater treatment system, with growth kinetics based on the
+ASM models of Henze et al (2000).
+
+The comments in this file are meant to be a brief reference, and a more
+complete description of the protocol file is found in the iDynoMiCS tutorial.
+More complete details are also found in the paper introducing iDynoMiCS
+by Lardon et al (2009, In preparation).
+
+A few general points about protocol files:
+- There is NO automatic checking for consistency in the protocol file.
+  Sometimes an inconsistency will cause an error in a simulation, and the
+  code will attempt to tell you where in the protocol file the error
+  occurred. However, the code WILL NOT catch errors in mass balances or
+  units, so you must be the watch.
+
+- Repeat: there is NO automatic checking for consistency - YOU must be careful!
+
+- In general, for entering parameter values it is best to use the units given
+  in the protocol file already, rather than change the described unit. The
+  common units used are hour or day for time, g/L for concentrations, fg for
+  mass, and meter for spatial scale.
+
+- Repeat: to be safe, CONVERT ALL PARAMETERS TO THE UNITS USED IN THIS EXAMPLE.
+
+- Some keywords are reserved for special use by the software, such as:
+  biomass, spore, capsule, pressure. In this example protocol file these
+  are pointed out.
+
+- When you create a name for a variable, you are allowed to use upper and lower
+  case and numbers, but no other symbols (and no spaces, either). Examples of
+  valid names include: MyParameter, anotherParameter, parameter3.
+
+- Any label that is prefixed with 'My' in this example is free to be changed
+  by you, the user, but take care not to use reserved keywords unless you
+  are sure the usage is correct.
+
+
+  Authors:
+	Laurent Lardon
+	Andreas Doetsch
+	Jan-Ulrich Kreft
+	Brian Merkey
+	Cristian Picioreanu
+	Barth F. Smets
+	Joao Xavier
+	Sonia Martins
+	Rob Clegg
+	Kieran Alden
+
+  Website: http://www.idynomics.org
+
+-->
+
+
+<!-- The entire simulation description is contained within the <idynomics> mark-up tags. -->
+<idynomics>
+
+	<!--#####################################################################
+		SIMULATOR SECTION
+	######################################################################-->
+
+	<!-- the <simulator> mark-up defines some global simulation parameters for the run. -->
+
+	<simulator>
+        <!-- Set "quietMode" to true if you don't need the log file (saves space and simulation runs slightly faster) -->
+        <param name="quietMode">false</param>
+		<!-- change this parameter to 'true' for restarting runs from within
+			a results folder-->
+		<param name="restartPreviousRun">false</param>
+		<!-- defining this value allows the simulation to be re-run deterministically -->
+		<param name="randomSeed">42</param>
+		<!-- this specifies how often the output files should be written -->
+		<param name="outputPeriod" unit="hour">1.0</param>
+
+		<!-- Specifies whether the simulation should check as to whether a new release is available -->
+		<param name="checkForReleaseUpdate">true</param>
+
+		<!-- iDynoMiCS may use a fixed or an adaptive global timestep. If 'adaptive' is true,
+			then the three 'timeStep***' parameters control the initial, minimum, and maximum
+			values the timestep may take. If 'adaptive' is false, then the value for
+			'timeStepIni' is used always.
+			When the simulation has reached the time specified by 'endOfSimulation', the
+			simulation will end. -->
+		<timeStep>
+			<param name="adaptive">false</param>
+			<param name="timeStepIni" unit="hour">0.05</param>
+			<param name="timeStepMin" unit="hour">0.05</param>
+			<param name="timeStepMax" unit="hour">1.0</param>
+			<param name="endOfSimulation" unit="hour">0.5</param>
+		</timeStep>
+
+		<!-- Attachment scenario - can be 'onetime', where the cells attach to the substratum initially (as in traditional iDynoMiCS)		
+		 or selfattach - where the cells start at the boundary layer and attach after a random walk to the substratum (new from Version 1.2) -->
+		<param name="attachment">onetime</param>
+		<param name="chemostat">true</param>
+		<!-- The 'agentTimeStep' parameter allows you to define a smaller timestep for agent
+			behaviors and interactions. And should always be EQUAL or LOWER than the global time step -->
+		<param name="agentTimeStep" unit="hour">0.05</param>
+		<!-- Invasion/Competition simulation. Set to true if the simulation should stop once there is only one species left in the system -->
+        <param name="invComp">false</param> 
+	</simulator>
+
+
+	<!--#####################################################################
+		INPUT SECTION
+	######################################################################-->
+
+	<!-- You may define the initial condition from which to start a simulation
+		by specifying an agent and/or bulk conditions file to read in. Often,
+		the files listed are taken from an evolved state of a similar simulation.
+
+		Note that any input files MUST be in the same directory as this protocol file. -->
+
+	<input>
+		<param name="useAgentFile">false</param>
+		<param name="inputAgentFileURL">agent_State(last).xml</param>
+		<param name="useBulkFile">false</param>
+		<param name="inputBulkFileURL">env_Sum(last).xml</param>
+	</input>
+
+
+
+	<!--#####################################################################
+		SOLUTES AND BIOMASS TYPES SECTION
+	######################################################################-->
+
+	<!-- This section is where any solutes included in the simulation are defined. Each
+		solute must be assigned to a domain (which will be defined later in the protocol
+		file), given a name, and must have its diffusivity parameter set.
+
+		Note that the solute name 'pressure' is treated specially in the code:
+		- 'pressure' is used to calculate the biomass pressure that leads to biomass
+			spreading in the biofilm, and should generally be left as-is.
+
+		Diffusion coefficients are expressed in units of m2.day-1.
+	-->
+
+	<solute domain="chemostat" name="glucose">
+		<param name="diffusivity" unit="m2.day-1">2e-4</param>
+	</solute>
+	<solute domain="chemostat" name="aip">
+		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+	</solute>
+	<solute domain="chemostat" name="acid">
+		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+	</solute>
+	<solute domain="chemostat" name="solvent">
+		<param name="diffusivity" unit="m2.day-1">1e-4</param>
+	</solute>
+
+	<!-- This section defines the biomass types (NOT species types) that will be used in
+		the simulation. The possible types are 'biomass', 'spore', and 'capsule', representing
+		active biomass, spore biomass, and capsular material (generally EPS), respectively.
+		At a minimum 'biomass' must be defined. The species defined later will be made up of
+		these biomass types.
+
+		The densities are expressed in g.L-1 ( = kg.m-3 = fg.um-3).
+	-->
+
+	<particle name="biomass">
+		<param name="density" unit="g.L-1">150.0</param>
+	</particle>
+	<particle name="spore">
+		<param name="density" unit="g.L-1">150.0</param>
+	</particle>
+	
+
+
+
+	<!--#####################################################################
+		WORLD SECTION
+	######################################################################-->
+
+	<!-- The <world> mark-up describes the overall environment the simulation will model, and
+		is made up of several mark-ups:
+		- <bulk> for defining a bulk solute compartment that is a source or sink for solutes
+			involved in biofilm growth.
+		- <computationDomain> for defining the spatial region the biofilm will grow in.
+	-->
+
+	<world>
+		<bulk name="chemostat">
+
+			<!-- If 'isConstant' is set to false, then solute concentrations in the bulk will
+				change in time due to production and consumption by the biofilm and by dilution
+				at the rate 'D' -->
+			<param name="isConstant">false</param>
+			<param name="D" unit="h-1">0.6</param>
+
+			<!-- List the solutes that reside in this bulk compartment, along with the initial
+				concentration ('Sbulk') and influent concentration ('Sin'). Additionally, you may
+				specify the 'Spulse' and 'pulseRate' parameters to spike the concentration to the
+				given value at the given rate.
+
+				Concentrations should be given as g.L-1 ( = kg.m-3 = fg.um-3 ).
+				
+				The 'pressure' solute parameters should be left as-is.
+			-->
+
+			<solute name="glucose">
+				<param name="Sbulk" unit="g.L-1">10e-3</param>
+				<param name="Sin" unit="g.L-1">10e-3</param>
+			</solute>
+			<solute name="aip">
+				<param name="Sbulk" unit="g.L-1">6e-3</param>
+				<param name="Sin" unit="g.L-1">6e-3</param>
+			</solute>
+			<solute name="acid">
+				<param name="Sbulk" unit="g.L-1">0.0</param>
+				<param name="Sin" unit="g.L-1">0.0</param>
+			</solute>
+			<solute name="solvent">
+				<param name="Sbulk" unit="g.L-1">10e-3</param>
+				<param name="Sin" unit="g.L-1">10e-3</param>
+			</solute>
+		</bulk>
+
+		<!-- The computation domain is a physical region that will contain the biofilm,
+			and has a more complex setup. -->
+
+		<computationDomain name="chemostat">
+		<grid nDim="1" nI="1" nJ="1" nK="1"/>
+			<param name="resolution" unit="um">2e3</param>
+
+			<!-- These parameters define whether the domain is 2D or 3D, and the number of
+				grid elements in each direction. 'nI', 'nJ', and 'nK' should be a power of two +1
+				(i.e. 33, 65, 129, etc.), and if 'nDim' is 3, then 'nK' should not be 1.
+
+				The 'resolution' parameter defines the size of an element edge, and so the
+				global domain size in a direction is the number of elements times the resolution:
+					nI*resolution 
+			
+			
+
+			< 'boundaryLayer' sets the distance above the biofilm/liquid interface that the
+				liquid is assumed to be spatially invariant; within this distance from the biofilm the
+				solute concentration will vary because of diffusion. 
+			<param name="boundaryLayer" unit="um">48.0</param>
+
+			< The 'biofilmDiffusivity' sets the relative diffusivity of the biofilm compared
+				to water; because the biofilm is slightly more dense than water, the diffusivity
+				will be lower. 
+			<param name="biofilmDiffusivity">0.8</param>
+
+			< The 'specificArea' is the surface-to-volume ratio of the reactor or world system, and
+				is used to scale up the limited computation domain to the global scale. 
+			<param name="specificArea" unit="m2.m-3">80.0</param> -->
+
+
+			<!-- Now comes the definition of the behavior at the boundaries. In general, there are 6
+				boundaries that must be addressed: y0z, yNz, x0z, xNz, x0y, xNy. These represent
+				the edges of the domain along the non-named direction (i.e. y0z is the face at x=0,
+				and yNz is the face at x=N). (For 2D simulations the x0y and xNy directions are
+				included, but are made periodic.)
+				
+				Each <boundaryCondition> also includes a <shape> mark-up to define the shape of the boundary.
+				In this release only the 'Planar' class is available, and it requires specification of
+				a point on the boundary and a vector pointing outside the domain. These shape parameters
+				must be given in index coordinates (0 to 33 for 33 gridpoints).
+				
+				The possible boundary types and any particular parameters that need to be given are:
+
+				- BoundaryZeroFlux: a boundary impermeable to solutes and agents
+					(no parameters)
+				- BoundaryBulk: a boundary connected to a <bulk> region, with a spatial region within
+					the domain representing the entire compartment. If agents cross this boundary
+					they are treated as having left the computation domain. Other parameters include:
+					* 'activeForSolute': set to 'yes' to allow solutes to interact with the bulk
+						<param name="activeForSolute">yes</param>
+					* 'bulk': this specifies wich <bulk> compartment to connect to.
+						<param name="bulk">chemostat</param>
+				- BoundaryCyclic: the boundary is periodic with anothe boundary, so that agents leaving
+					this boundary will enter through the other, and vice-versa; solute concentrations
+					are constant across the two boundaries. You must specify the two faces (<shape>s)
+					that are to be connected this way.
+				- BoundaryGasMembrane: a boundary that is impermeable to agents and most solutes, but
+					permeable to a specified solute (used to represent gas transfer membranes).
+					Parameters include:
+					* You must specify a bulk compartment and the solute able to permeate:
+						<param name="isPermeableTo" detail="glucose" unit="m2.day-1">1</param>
+					* 'bulk': this will be different than the 'bulk' for BoundaryBulk:
+						<param name="bulk">MyGasMembraneBulk</param>
+
+			-->
+
+			<boundaryCondition class="BoundaryZeroFlux" name="y0z">
+				<shape class="Planar">
+					<param name="pointIn" i="-1" j="0" k="0"/>
+					<param name="vectorOut" i="-1" j="0" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryBulk" name="yNz">
+				<param name="activeForSolute">yes</param>
+				<param name="bulk">chemostat</param>
+				<shape class="Planar">
+					<param name="pointIn" i="1" j="0" k="0"/>
+					<param name="vectorOut" i="1" j="0" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryCyclic" name="x0z">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="-1" k="0"/>
+					<param name="vectorOut" i="0" j="-1" k="0"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="1" k="0"/>
+					<param name="vectorOut" i="0" j="1" k="0"/>
+				</shape>
+			</boundaryCondition>
+
+			<boundaryCondition class="BoundaryCyclic" name="x0y">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="-1"/>
+					<param name="vectorOut" i="0" j="0" k="-1"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="1"/>
+					<param name="vectorOut" i="0" j="0" k="1"/>
+				</shape>
+			</boundaryCondition>
+		</computationDomain>
+	</world>
+
+
+
+	<!--#####################################################################
+		REACTION SECTION
+	######################################################################-->
+
+	<!-- In this next section all the reactions included in the simulation should be defined.
+		The <reaction> mark-up defines which type of biomass carries out the reaction. The
+		parameter for 'catalyzedBy' should be 'biomass', 'spore', or 'capsule'), and the 'name'
+		parameter should be unique to this reaction. The class should be kept as 'ReactionFactor'.
+
+		Then each reaction has a 'muMax' parameter, which is the maximum rate at which the reaction
+		may proceed.
+
+		Next are one or more <kineticFactor> mark-ups that define multiplicative factors affecting
+		the reaction rate and decreasing the overall rate from muMax to something lower. There are
+		several possible types for <kineticFactor>, and each may take a parameter as well as a
+		solute that will set the term's value:
+			* Monod kinetic: S/(Ks+S)
+				<kineticFactor class="MonodKinetic" solute="aip">
+					<param name="Ks" unit="g.L-1">1.5e-3</param>
+				</kineticFactor>
+
+			* Simple inhibition kinetic: Ki/(Ki+S)
+				<kineticFactor class="SimpleInhibition" solute="glucose">
+					<param name="Ki" unit="g.L-1">1.5e-3</param>
+				</kineticFactor>
+
+			* Haldane kinetic: S/(Ks + S + S^2/Ki)
+				<kineticFactor class="HaldaneKinetic" solute="acid">
+					<param name="Ks" unit="g.L-1">0.05e-3</param>
+					<param name="Ki" unit="g.L-1">0.25e-3</param>
+				</kineticFactor>
+
+			* Hill kinetic: S^h/(Ks^h + S^h)
+				<kineticFactor class="HillKinetic" solute="solvent">
+					<param name="Ks" unit="g.L-1">0.05e-3</param>
+					<param name="h" unit="-">0.5</param>
+				</kineticFactor>
+			
+			* First-order kinetic: always gives value 1, for nonvarying rates
+				<kineticFactor class="FirstOrderKinetic"/>
+
+
+		After specifying the reaction kinetic factors, you must specify the coefficients
+		of solute and biomass production and consumption; these are in the <yield> mark-up.
+		The affected solutes and biomass are each listed with a coefficient, and positive
+		values indicate production while negative values indicate consumption. A line such as:
+			<param name="aip" unit="g.g-1">-1.587</param>
+		specifies the consumption of 'aip' during the reaction on a gram-per-gram basis
+		with the catalyzing ('catalyzedBy') biomass type. In the above line, production of
+		a total of one gram of biomass will consume 1.587 grams of 'aip'.
+
+	-->
+
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MyGlycolysis">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="acid" unit="g.g-1">1.587</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">1</param>
+	
+		</yield>
+	</reaction>
+
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySolventogenesis">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="solvent" unit="g.g-1">1.587</param>
+			<param name="acid" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">1</param>
+			
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySporeProduction1">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">-1</param>
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="spore" class="ReactionFactor" name="MySporeProduction2">
+		<param name="muMax" unit="hour-1">0.0417</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">1.5e-3</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">0.5e-3</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1</param>
+			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="biomass" unit="g.g-1">-1</param>
+		</yield>
+	</reaction>
+
+
+
+
+	<!--#####################################################################
+		SOLVER SECTION
+	######################################################################-->
+
+	<!-- The <solver> mark-ups define the solvers to be used in calculating different
+		aspects of the simulation -->
+
+	<!-- The 'Solver_multigrid' solver will compute solute concentrations in the
+		given computational domain. The given parameters pertain to details of
+		the multigrid algorithm and should generally be left as-is. The list of
+		<reaction> mark-ups should include ALL reactions that affect solute concentrations
+		in the domain through production or consumption. -->
+
+	<solver class="Solver_chemostat" name="solver1" domain="chemostat">
+		<param name="rtol">1e-2</param>
+	 	<param name="hmax">1e-3</param>
+		<param name="active">true</param>
+
+		<reaction name="MySolventogenesis"/>
+		<reaction name="MySporeProduction1"/>
+		<reaction name="MyGlycolysis"/>
+		<reaction name="MySporeProduction2"/>
+
+	</solver>
+
+
+
+
+	<!--#####################################################################
+		AGENT GRID SECTION
+	######################################################################-->
+
+	<!-- The agent grid contains and manages all agents living in the given domain.
+		The parameters should be adjusted to match the simulation conditions. -->
+
+	<agentGrid>
+		<!-- domain of agents to manage -->
+		<param name="computationDomain">chemostat</param>
+
+		
+	</agentGrid>
+
+
+	<!--#####################################################################
+		SPECIES SECTION
+	######################################################################-->
+
+	<species class="Clostridium" name="MyHeterotroph">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+
+		<param name="color">red</param>
+		<param name="computationDomain">chemostat</param>
+		<param name="divRadius" unit="um">2.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.2</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<param name="shoveFactor" unit="um">1.15</param>
+		<param name="shoveLimit" unit="um">0.0</param>
+		
+		<param name="hmax">1e-4</param>
+
+		<param name="epsMax">0.1</param>
+
+		<reaction name="MyGlycolysis" status="active"/>
+		<reaction name="MySolventogenesis" status="active"/>
+		<reaction name="MySporeProduction1" status="active"/>
+		<reaction name="MySporeProduction2" status="active"/>
+		
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="MySporeProduction1" status="active"/>
+				<reaction name="MySporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesis>
+				<reaction name="MySolventogenesis" status="active"/>
+			</solventogenesis>
+			
+		</reactionSwitch>
+
+		<initArea number="10">
+			<param name="birthday" unit="hour">0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="264.0" z="0.0"/>
+		</initArea>
+	</species>
+
+	<species class="Clostridium" name="MySwitchHeterotroph">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+
+		<param name="color">white</param>
+		<param name="computationDomain">chemostat</param>
+		<param name="divRadius" unit="um">3.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.1</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<param name="shoveFactor" unit="um">1.15</param>
+		<param name="shoveLimit" unit="um">0.0</param>
+		
+		<param name="hmax">1e-4</param>
+		
+		<param name="epsMax">0.1</param>
+		<param name="kHyd" unit="hr-1">0.007</param>
+
+		<reaction name="MyGlycolysis" status="active"/>
+		<reaction name="MySolventogenesis" status="inactive"/>
+		<reaction name="MySporeProduction1" status="inactive"/>
+		<reaction name="MySporeProduction2" status="inactive"/>
+
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="MySporeProduction1" status="active"/>
+				<reaction name="MySporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesis>
+				<reaction name="MySolventogenesis" status="active"/>
+			</solventogenesis>
+			
+		</reactionSwitch>
+
+		<initArea number="10">
+			<param name="birthday" unit="hour">0.0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="264.0" z="0.0"/>
+		</initArea>
+	</species>
+</idynomics>

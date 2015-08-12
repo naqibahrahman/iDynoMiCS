@@ -145,12 +145,12 @@ public abstract class ODEsolver
 			 * matrix, dFdY, doesn't need this mini-timestep.
 			 */
 			_tdel = _sqrtE * (_t+_h);
-			LogFile.writeMatrix("y", y);
-			LogFile.writeLog("tdel "+_tdel);
+			//LogFile.writeMatrix("y", y);
+			//LogFile.writeLog("tdel "+_tdel);
 			_dYdT = calc1stDeriv(y, _dYdT);
-			LogFile.writeMatrix("dYdT", _dYdT);
+			//LogFile.writeMatrix("dYdT", _dYdT);
 			_dFdT = calc2ndDeriv(y, _tdel, _dFdT);
-			LogFile.writeMatrix("dFdT", _dFdT);
+			//LogFile.writeMatrix("dFdT", _dFdT);
 			_dFdY = calcJacobian(y, _dFdY);
 			/*
 			 * Try out this value of h, keeping a note of whether it ever
@@ -277,6 +277,7 @@ public abstract class ODEsolver
 			 */
 			_h = Math.min(_h, hmax);
 			_t = _tnext;
+			//System.out.println("t "+_t);
 			/*
 			 * Check no variables have gone negative.
 			 * TODO Rob 4June2015: This could be done better.
@@ -298,9 +299,9 @@ public abstract class ODEsolver
 		/*
 		 * Finally, return the answer.
 		 */
-		LogFile.writeLog("new y");
-		for ( int i = 0; i < _nVar; i++ )
-			LogFile.writeLog("\t"+y.get(i, 0));
+		//LogFile.writeLog("new y");
+		//for ( int i = 0; i < _nVar; i++ )
+		//	LogFile.writeLog("\t"+y.get(i, 0));
 		return y;
 	}
 	

@@ -189,7 +189,15 @@ public class Clostridium extends GeneRegBac {
 
 		updateExternal();
 		this._regulationSolver.setReferenceAgent(this);
-		this._proteinLevels = this._regulationSolver.solve(this._proteinLevels, _agentGrid.AGENTTIMESTEP);
+		Matrix y = new Matrix(this._proteinLevels.length, 1);
+		for ( int i = 0; i < this._proteinLevels.length; i++ )
+			y.set(i, 0, this._proteinLevels[i]);
+		System.out.print("starting regulation solver...");
+		y = this._regulationSolver.solve(y, _agentGrid.AGENTTIMESTEP);
+		System.out.println("done");
+		for ( int i = 0; i < this._proteinLevels.length; i++ )
+			this._proteinLevels[i] = y.get(i, 0);
+
 		checkSpo0A();
 		secretesAIP();
 		solventogenesis();
