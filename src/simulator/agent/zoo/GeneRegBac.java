@@ -102,7 +102,6 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		// write the data matching the header file
 		StringBuffer tempString = super.writeOutput();
 		
-		//TODO
 		for ( int i = 0; i < this._numProtTypes; i++ )
 			tempString.append("," + this._proteinLevels[i]);
 		return tempString;

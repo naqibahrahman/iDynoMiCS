@@ -360,7 +360,7 @@ public class ClostridiumParam extends GeneRegBacParam
 		sporeThresh = Double.isNaN(value) ? sporeThresh : value;
 		
 		//Probability
-		value = getSpeciesParameterDouble("ProbParam", aSpeciesRoot, speciesDefaults);
+		value = getSpeciesParameterDouble("sporeProb", aSpeciesRoot, speciesDefaults);
 		sporeProb = Double.isNaN(value) ? sporeProb : value;
 		
 		
