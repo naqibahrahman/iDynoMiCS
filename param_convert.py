@@ -12,7 +12,7 @@ file_suffix = '.java'
 
 
 # Set this to true when you're happy the values should be changed on file
-overwrite_file = False
+overwrite_file = True
 
 
 # Units you want to use as defaults, and the relationship between default
@@ -84,8 +84,7 @@ def convert_param(value, units):
             units = units.replace(unit, default)
         except ValueError:
             pass
-    #print units, unit, index, units[index:index+len(unit)]
-    return str(float_val), units+'\n'
+    return ' '+str(float_val), units+'\n'
 
 file_path = os.path.join(file_dir, file_name+file_suffix)
 
@@ -93,8 +92,8 @@ with open(file_path, 'r') as f:
     lines = f.readlines()
 
 
-for line in lines:
-    #print line
+for i in range(len(lines)):
+    line = lines[i]
     if file_name+'()' in line:
         break
     if 'public double' in line.lower():
@@ -104,6 +103,7 @@ for line in lines:
             print('%s has changed\n  Old: %s %s\n  New: %s %s\n'
                     %(name, value, units.replace('\n',''),
                       new_val, new_units.replace('\n','')))
+            lines[i] = line.replace(units, new_units).replace(value, new_val)
 
 
 if overwrite_file:

@@ -27,99 +27,99 @@ public class ClostridiumParam extends GeneRegBacParam
 	/*
 	 * Production 
 	 */
-	public Double c_H = 8.0e-6; // nM cell-1 ml s-1
-	public Double c_K = 0.1; // nM s-1
-	public Double c_agr_l = 0.4; // nM s-1
-	public Double c_SA_l = 0.4; // nM s-1
-	public Double c_SA_2l = 0.4; // nM s-1
-	public Double c_Ph = 0.4; // nM s-1
-	public Double c_Ab_1 = 0.4; // nM s-1
-	public Double c_Ab_2 = 0.4; // nM s-1
-	public Double c_sigmaH = 0.4; // nM s-1
-	public Double k_agr = 0.4; // nM-1 s-1
-	public Double c_agr_CA = 4.0; // nM s-1
-	public Double c_agr_h = 40.0; // nM s-1
-	public Double c_SA_2h = 40.0; // nM s-1
+	public Double c_H = 2.88e-05; // uM cell-1 ml h-1
+	public Double c_K = 0.36; // uM h-1
+	public Double c_agr_l = 1.44; // uM h-1
+	public Double c_SA_l = 1.44; // uM h-1
+	public Double c_SA_2l = 1.44; // uM h-1
+	public Double c_Ph = 1.44; // uM h-1
+	public Double c_Ab_1 = 1.44; // uM h-1
+	public Double c_Ab_2 = 1.44; // uM h-1
+	public Double c_sigmaH = 1.44; // uM h-1
+	public Double k_agr = 1440000.0; // uM-1 h-1
+	public Double c_agr_CA = 14.4; // uM h-1
+	public Double c_agr_h = 144.0; // uM h-1
+	public Double c_SA_2h = 144.0; // uM h-1
 	/*
 	 * DNA unbinding
 	 */
-	public Double U_SAP_SA = 20.0; // nM
-	public Double U_sigmaH_SA = 20.0; // nM
-	public Double U_AP_agr = 20.0; // nM
-	public Double U_Ab_Ab = 20.0; // nM
-	public Double U_SAP_Ab = 20.0; // nM
-	public Double U_Ab_sigmaH = 20.0; // nM
+	public Double U_SAP_SA = 0.02; // uM
+	public Double U_sigmaH_SA = 0.02; // uM
+	public Double U_AP_agr = 0.02; // uM
+	public Double U_Ab_Ab = 0.02; // uM
+	public Double U_SAP_Ab = 0.02; // uM
+	public Double U_Ab_sigmaH = 0.02; // uM
 	/*
 	 * DNA binding
 	 */
-	public Double B_SAP_SA = 20.0; // nM
-	public Double B_sigmaH_SA = 20.0; // nM
-	public Double B_AP_agr = 20.0; // nM
-	public Double B_Ab_Ab = 20.0; // nM
-	public Double B_SAP_Ab = 20.0; // nM
-	public Double B_Ab_sigmaH = 20.0; // nM
+	public Double B_SAP_SA = 0.02; // uM
+	public Double B_sigmaH_SA = 0.02; // uM
+	public Double B_AP_agr = 0.02; // uM
+	public Double B_Ab_Ab = 0.02; // uM
+	public Double B_SAP_Ab = 0.02; // uM
+	public Double B_Ab_sigmaH = 0.02; // uM
 	/*
 	 * Complex separation
 	 */
-	public Double gamma_RP = 0.1;  // s-1
+	public Double gamma_RP = 360.0;  // h-1
 	/*
 	 * Complex formation
 	 */
-	public Double beta_RP = 0.083;  // s-1
+	public Double beta_RP = 298.8;  // h-1
 	/*
 	 * Degradation
 	 */
-	public Double lambda_SAP = 1.0e-5;  // s-1
-	public Double lambda_sigmaH = 0.0004;  // s-1
-	public Double lambda_A = 0.002;  // s-1
-	public Double lambda_AP = 0.002;  // s-1
-	public Double lambda_B = 0.002;  // s-1
-	public Double lambda_S = 0.002;  // s-1
-	public Double lambda_T = 0.002;  // s-1
-	public Double lambda_R = 0.002;  // s-1
-	public Double lambda_RP = 0.002;  // s-1
-	public Double lambda_K = 0.002;  // s-1
-	public Double lambda_KP = 0.002;  // s-1
-	public Double lambda_SA = 0.002;  // s-1
-	public Double lambda_Ab = 0.002;  // s-1
-	public Double lambda_a = 0.02;  // s-1
-	public Double lambda_Ph = 0.002;  // s-1
-	public Double lambda_PhP = 0.002;  // s-1
-	public Double lambda_C = 0.002;  // s-1
+	public Double lambda_SAP = 0.036;  // h-1
+	public Double lambda_sigmaH = 1.44;  // h-1
+	public Double lambda_A = 7.2;  // h-1
+	public Double lambda_AP = 7.2;  // h-1
+	public Double lambda_B = 7.2;  // h-1
+	public Double lambda_S = 7.2;  // h-1
+	public Double lambda_T = 7.2;  // h-1
+	public Double lambda_R = 7.2;  // h-1
+	public Double lambda_RP = 7.2;  // h-1
+	public Double lambda_K = 7.2;  // h-1
+	public Double lambda_KP = 7.2;  // h-1
+	public Double lambda_SA = 7.2;  // h-1
+	public Double lambda_Ab = 7.2;  // h-1
+	public Double lambda_a = 72.0;  // h-1
+	public Double lambda_Ph = 7.2;  // h-1
+	public Double lambda_PhP = 7.2;  // h-1
+	public Double lambda_C = 7.2;  // h-1
 	/*
 	 * Autophosphorylation
 	 */
-	public Double alpha = 0.1;  // s-1
+	public Double alpha = 360.0;  // h-1
 	
 	/*
 	 * Phosphotransfer
 	 */
-	public Double phi_KP_SA = 1.0e-6; // nM-1 s-1
-	public Double phi_SAP_K = 1.0e-6; // nM-1 s-1
-	public Double phi_AP_SA = 1.0e-6; // nM-1 s-1
-	public Double phi_SAP_Ph = 1.0e-6; // nM-1 s-1
-	public Double phi_RP_A = 1.0e-6; // nM-1 s-1
+	public Double phi_KP_SA = 3.6; // uM-1 h-1
+	public Double phi_SAP_K = 3.6; // uM-1 h-1
+	public Double phi_AP_SA = 3.6; // uM-1 h-1
+	public Double phi_SAP_Ph = 3.6; // uM-1 h-1
+	public Double phi_RP_A = 3.6; // uM-1 h-1
 	/*
 	 * Dephosphorylation
 	 */
-	public Double psi_AP = 0.0004; // s-1
-	public Double psi_KP = 0.0004; // s-1
-	public Double psi_SAP = 0.0004; // s-1
-	public Double psi_PhP = 0.0004; // s-1
+	public Double psi_AP = 1.44; // h-1
+	public Double psi_KP = 1.44; // h-1
+	public Double psi_SAP = 1.44; // h-1
+	public Double psi_PhP = 1.44; // h-1
 	/*
 	 * Transport
 	 */
-	public Double mu_e = 1.0; //  s-1
-	public Double mu_i = 1.0; // s-1
+	public Double mu_e = 3600.0; //  h-1
+	public Double mu_i = 3600.0; // h-1
 	/*
 	 * Movement to cell membrane
 	 */
-	public Double mu_agr = 1.0; // s-1
+	public Double mu_agr = 3600.0; // h-1
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis and/or sporulation.
 	 */
-	public Double spo0APthresh = 6000.0; // nM
+	public Double spo0APthresh = 6.0; // uM
 	
 	/**
 	 * Threshold spore mass triggering the end of sporulation.
