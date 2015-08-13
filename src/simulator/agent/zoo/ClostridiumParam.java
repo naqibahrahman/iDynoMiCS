@@ -18,113 +18,113 @@ public class ClostridiumParam extends GeneRegBacParam
 	 * Clostridium default parameters
 	 */
 	
+	/*
+	 * Reaction indices
+	 */
 	protected ArrayList<Integer> onSporulation;
 	protected ArrayList<Integer> offAllReactions;
 	protected ArrayList<Integer> onSolventogenesis;
-	
-	// Production 
-	public Double c_H = 8.0e-6;
-	public Double c_K = 0.1;
-	public Double c_agr_l = 0.4;
-	public Double c_SA_l = 0.4;
-	public Double c_SA_2l = 0.4;
-	public Double c_Ph = 0.4;
-	public Double c_Ab_1 = 0.4;
-	public Double c_Ab_2 = 0.4;
-	public Double c_sigmaH = 0.4;
-	public Double k_agr = 0.4;
-	public Double c_agr_CA = 4.0;
-	public Double c_agr_h = 40.0;
-	public Double c_SA_2h = 40.0;
-	
-	// DNA unbinding
-	public Double U_SAP_SA = 20.0;
-	public Double U_sigmaH_SA = 20.0;
-	public Double U_AP_agr = 20.0;
-	public Double U_Ab_Ab = 20.0;
-	public Double U_SAP_Ab = 20.0;
-	public Double U_Ab_sigmaH = 20.0;
-	
-	// DNA binding
-	public Double B_SAP_SA = 20.0;
-	public Double B_sigmaH_SA = 20.0;
-	public Double B_AP_agr = 20.0;
-	public Double B_Ab_Ab = 20.0;
-	public Double B_SAP_Ab = 20.0;
-	public Double B_Ab_sigmaH = 20.0;
-	
-	// Complex separation
-	public Double gamma_RP = 0.1;
-	
-	// Complex formation
-	public Double beta_RP = 0.083;
-	
-	// Degradation
-	public Double lambda_SAP = 1.0e-5;
-	public Double lambda_sigmaH = 0.0004;
-	public Double lambda_A = 0.002;
-	public Double lambda_AP = 0.002;
-	public Double lambda_B = 0.002;
-	public Double lambda_S = 0.002;
-	public Double lambda_T = 0.002;
-	public Double lambda_R = 0.002;
-	public Double lambda_RP = 0.002;
-	public Double lambda_K = 0.002;
-	public Double lambda_KP = 0.002;
-	public Double lambda_SA = 0.002;
-	public Double lambda_Ab = 0.002;
-	public Double lambda_a = 0.02;
-	public Double lambda_Ph = 0.002;
-	public Double lambda_PhP = 0.002;
-	public Double lambda_C = 0.002;
+	/*
+	 * Production 
+	 */
+	public Double c_H = 8.0e-6; // nM cell-1 ml s-1
+	public Double c_K = 0.1; // nM s-1
+	public Double c_agr_l = 0.4; // nM s-1
+	public Double c_SA_l = 0.4; // nM s-1
+	public Double c_SA_2l = 0.4; // nM s-1
+	public Double c_Ph = 0.4; // nM s-1
+	public Double c_Ab_1 = 0.4; // nM s-1
+	public Double c_Ab_2 = 0.4; // nM s-1
+	public Double c_sigmaH = 0.4; // nM s-1
+	public Double k_agr = 0.4; // nM-1 s-1
+	public Double c_agr_CA = 4.0; // nM s-1
+	public Double c_agr_h = 40.0; // nM s-1
+	public Double c_SA_2h = 40.0; // nM s-1
+	/*
+	 * DNA unbinding
+	 */
+	public Double U_SAP_SA = 20.0; // nM
+	public Double U_sigmaH_SA = 20.0; // nM
+	public Double U_AP_agr = 20.0; // nM
+	public Double U_Ab_Ab = 20.0; // nM
+	public Double U_SAP_Ab = 20.0; // nM
+	public Double U_Ab_sigmaH = 20.0; // nM
+	/*
+	 * DNA binding
+	 */
+	public Double B_SAP_SA = 20.0; // nM
+	public Double B_sigmaH_SA = 20.0; // nM
+	public Double B_AP_agr = 20.0; // nM
+	public Double B_Ab_Ab = 20.0; // nM
+	public Double B_SAP_Ab = 20.0; // nM
+	public Double B_Ab_sigmaH = 20.0; // nM
+	/*
+	 * Complex separation
+	 */
+	public Double gamma_RP = 0.1;  // s-1
+	/*
+	 * Complex formation
+	 */
+	public Double beta_RP = 0.083;  // s-1
+	/*
+	 * Degradation
+	 */
+	public Double lambda_SAP = 1.0e-5;  // s-1
+	public Double lambda_sigmaH = 0.0004;  // s-1
+	public Double lambda_A = 0.002;  // s-1
+	public Double lambda_AP = 0.002;  // s-1
+	public Double lambda_B = 0.002;  // s-1
+	public Double lambda_S = 0.002;  // s-1
+	public Double lambda_T = 0.002;  // s-1
+	public Double lambda_R = 0.002;  // s-1
+	public Double lambda_RP = 0.002;  // s-1
+	public Double lambda_K = 0.002;  // s-1
+	public Double lambda_KP = 0.002;  // s-1
+	public Double lambda_SA = 0.002;  // s-1
+	public Double lambda_Ab = 0.002;  // s-1
+	public Double lambda_a = 0.02;  // s-1
+	public Double lambda_Ph = 0.002;  // s-1
+	public Double lambda_PhP = 0.002;  // s-1
+	public Double lambda_C = 0.002;  // s-1
+	/*
+	 * Autophosphorylation
+	 */
+	public Double alpha = 0.1;  // s-1
 	
 	/*
-	 * Autophosphorylation (units s-1)
+	 * Phosphotransfer
 	 */
-	public Double alpha = 0.1;
-	
+	public Double phi_KP_SA = 1.0e-6; // nM-1 s-1
+	public Double phi_SAP_K = 1.0e-6; // nM-1 s-1
+	public Double phi_AP_SA = 1.0e-6; // nM-1 s-1
+	public Double phi_SAP_Ph = 1.0e-6; // nM-1 s-1
+	public Double phi_RP_A = 1.0e-6; // nM-1 s-1
 	/*
-	 * Phosphotransfer (units nM-1 s-1)
+	 * Dephosphorylation
 	 */
-	public Double phi_KP_SA = 1.0e-6;
-	public Double phi_SAP_K = 1.0e-6;
-	public Double phi_AP_SA = 1.0e-6;
-	public Double phi_SAP_Ph = 1.0e-6;
-	public Double phi_RP_A = 1.0e-6;
-	
+	public Double psi_AP = 0.0004; // s-1
+	public Double psi_KP = 0.0004; // s-1
+	public Double psi_SAP = 0.0004; // s-1
+	public Double psi_PhP = 0.0004; // s-1
 	/*
-	 * Dephosphorylation (units s-1)
+	 * Transport
 	 */
-	public Double psi_AP = 0.0004;
-	public Double psi_KP = 0.0004;
-	public Double psi_SAP = 0.0004;
-	public Double psi_PhP = 0.0004;
-	
-	// Transport
-	public Double mu_e = 1.0;
-	public Double mu_i = 1.0;
-	
-	// Movement to cell membrane
-	public Double mu_agr = 1.0;
-	
-	
-	// Acid conversion
+	public Double mu_e = 1.0; //  s-1
+	public Double mu_i = 1.0; // s-1
 	/*
-	 * No longer need this, as we now switch on a reaction defined in the
-	 * protocol file.
+	 * Movement to cell membrane
 	 */
-	//public Double rho = 2.0e-8;
-	
+	public Double mu_agr = 1.0; // s-1
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis and/or sporulation.
 	 */
-	public Double spo0APthresh = 6000.0;
+	public Double spo0APthresh = 6000.0; // nM
 	
 	/**
-	 * Threshold spore mass (in fg) triggering the end of sporulation.
+	 * Threshold spore mass triggering the end of sporulation.
 	 */
-	public Double sporeThresh = 6000.0;
+	public Double sporeThresh = 6000.0; // fg
 	
 	/**
 	 * Probability that a newly-created daughter cell will sporulate if the 
