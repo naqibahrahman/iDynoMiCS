@@ -31,53 +31,54 @@ public class Clostridium extends GeneRegBac {
 		_proteinLevels = new Double[_numProtTypes];
 		
 		_proteinNames[0] = "SA";
-		_proteinLevels[0] = 17500.0;
+		_proteinLevels[0] = 17.5;
 		
 		_proteinNames[1] = "SAP";
-		_proteinLevels[1] = 5000.0;
+		_proteinLevels[1] = 5.0;
 		
 		_proteinNames[2] = "K";
-		_proteinLevels[2] = 10.0;
+		_proteinLevels[2] = 0.01;
 		
 		_proteinNames[3] = "KP";
-		_proteinLevels[3] = 40.0;
+		_proteinLevels[3] = 0.04;
 		
 		_proteinNames[4] = "Ph";
-		_proteinLevels[4] = 50.0;
+		_proteinLevels[4] = 0.05;
 		
 		_proteinNames[5] = "PhP";
-		_proteinLevels[5] = 125.0;
+		_proteinLevels[5] = 0.125;
 		
 		_proteinNames[6] = "Ab";
-		_proteinLevels[6] = 6.0;
+		_proteinLevels[6] = 0.006;
 		
 		_proteinNames[7] = "SigmaH";
-		_proteinLevels[7] = 100.0;
+		_proteinLevels[7] = 0.1;
 		
 		_proteinNames[8] = "A";
-		_proteinLevels[8] = 1700.0;
+		_proteinLevels[8] = 1.7;
 		
 		_proteinNames[9] = "AP";
-		_proteinLevels[9] = 160.0;
+		_proteinLevels[9] = 0.16;
 		
 		_proteinNames[10] = "B";
-		_proteinLevels[10] = 40.0;
+		_proteinLevels[10] = 0.04;
 		
 		_proteinNames[11] = "C";
-		_proteinLevels[11] = 4.0;
+		_proteinLevels[11] = 0.004;
 		
 		_proteinNames[12] = "S";
-		_proteinLevels[12] = 0.01;
+		_proteinLevels[12] = 0.00001;
 		
 		_proteinNames[13] = "T";
-		_proteinLevels[13] = 18500.0;
+		_proteinLevels[13] = 0.00001;
 		
 		_proteinNames[14] = "R";
-		_proteinLevels[14] = 2.0;
+		_proteinLevels[14] = 0.002;
 		
 		_proteinNames[15] = "RP";
-		_proteinLevels[15] = 1850.0;
+		_proteinLevels[15] = 1.850;
 		
+
 		
 	}
 	
@@ -437,10 +438,15 @@ public class Clostridium extends GeneRegBac {
 	}
 	
 	// ODE of dT/dt
-	private Double T_Rate(Double B, Double T)
+	private Double T_Rate(Double B, Double S, Double T)
 	{
 		Double rate = 0.0;
 		rate = getSpeciesParam().mu_agr*B;
+		/*
+		 * TODO This is put here temporarily to check if over-production and/or
+		 * under-degradation of T is causing the system to explode 
+		 */
+		rate -= getSpeciesParam().k_agr*T*S;
 		rate -= getSpeciesParam().lambda_T*T;
 		return rate;
 	}
@@ -502,7 +508,7 @@ public class Clostridium extends GeneRegBac {
 		rates.set(10, 0, this.B_Rate(AP, B));
 		rates.set(11, 0, this.C_Rate(C));
 		rates.set(12, 0, this.S_Rate(B, S, T));
-		rates.set(13, 0, this.T_Rate(B, T));
+		rates.set(13, 0, this.T_Rate(B, S, T));
 		rates.set(14, 0, this.R_rate(C, R, RP));
 		rates.set(15, 0, this.RP_rate(R, RP));
 		
@@ -735,9 +741,12 @@ public class Clostridium extends GeneRegBac {
 	/******************************************************************************************************/
 		//wrt B
 		dFdY.set(13, 10, getSpeciesParam().mu_agr);
+		
+		//wrt S
+		dFdY.set(13, 12, -getSpeciesParam().k_agr*T);
 	
 		//wrt T
-		dFdY.set(13, 13, -getSpeciesParam().lambda_T);
+		dFdY.set(13, 13, -getSpeciesParam().lambda_T - getSpeciesParam().k_agr*S);
 		
 	/******************************************************************************************************	
 		 * The following differentiate R with respect to different proteins

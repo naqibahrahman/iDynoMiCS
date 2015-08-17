@@ -96,7 +96,7 @@ A few general points about protocol files:
 			<param name="timeStepIni" unit="hour">0.05</param>
 			<param name="timeStepMin" unit="hour">0.05</param>
 			<param name="timeStepMax" unit="hour">1.0</param>
-			<param name="endOfSimulation" unit="hour">0.5</param>
+			<param name="endOfSimulation" unit="hour">0.1</param>
 		</timeStep>
 
 		<!-- Attachment scenario - can be 'onetime', where the cells attach to the substratum initially (as in traditional iDynoMiCS)		
@@ -216,8 +216,8 @@ A few general points about protocol files:
 				<param name="Sin" unit="g.L-1">1e-6</param>
 			</solute>
 			<solute name="acid">
-				<param name="Sbulk" unit="g.L-1">1e-6</param>
-				<param name="Sin" unit="g.L-1">1e-6</param>
+				<param name="Sbulk" unit="g.L-1">0.0</param>
+				<param name="Sin" unit="g.L-1">0.0</param>
 			</solute>
 			<solute name="solvent">
 				<param name="Sbulk" unit="g.L-1">0.0</param>
@@ -231,68 +231,7 @@ A few general points about protocol files:
 		<computationDomain name="chemostat">
 		<grid nDim="1" nI="1" nJ="1" nK="1"/>
 			<param name="resolution" unit="um">2e3</param>
-
-			<!-- These parameters define whether the domain is 2D or 3D, and the number of
-				grid elements in each direction. 'nI', 'nJ', and 'nK' should be a power of two +1
-				(i.e. 33, 65, 129, etc.), and if 'nDim' is 3, then 'nK' should not be 1.
-
-				The 'resolution' parameter defines the size of an element edge, and so the
-				global domain size in a direction is the number of elements times the resolution:
-					nI*resolution 
 			
-			
-
-			< 'boundaryLayer' sets the distance above the biofilm/liquid interface that the
-				liquid is assumed to be spatially invariant; within this distance from the biofilm the
-				solute concentration will vary because of diffusion. 
-			<param name="boundaryLayer" unit="um">48.0</param>
-
-			< The 'biofilmDiffusivity' sets the relative diffusivity of the biofilm compared
-				to water; because the biofilm is slightly more dense than water, the diffusivity
-				will be lower. 
-			<param name="biofilmDiffusivity">0.8</param>
-
-			< The 'specificArea' is the surface-to-volume ratio of the reactor or world system, and
-				is used to scale up the limited computation domain to the global scale. 
-			<param name="specificArea" unit="m2.m-3">80.0</param> -->
-
-
-			<!-- Now comes the definition of the behavior at the boundaries. In general, there are 6
-				boundaries that must be addressed: y0z, yNz, x0z, xNz, x0y, xNy. These represent
-				the edges of the domain along the non-named direction (i.e. y0z is the face at x=0,
-				and yNz is the face at x=N). (For 2D simulations the x0y and xNy directions are
-				included, but are made periodic.)
-				
-				Each <boundaryCondition> also includes a <shape> mark-up to define the shape of the boundary.
-				In this release only the 'Planar' class is available, and it requires specification of
-				a point on the boundary and a vector pointing outside the domain. These shape parameters
-				must be given in index coordinates (0 to 33 for 33 gridpoints).
-				
-				The possible boundary types and any particular parameters that need to be given are:
-
-				- BoundaryZeroFlux: a boundary impermeable to solutes and agents
-					(no parameters)
-				- BoundaryBulk: a boundary connected to a <bulk> region, with a spatial region within
-					the domain representing the entire compartment. If agents cross this boundary
-					they are treated as having left the computation domain. Other parameters include:
-					* 'activeForSolute': set to 'yes' to allow solutes to interact with the bulk
-						<param name="activeForSolute">yes</param>
-					* 'bulk': this specifies wich <bulk> compartment to connect to.
-						<param name="bulk">chemostat</param>
-				- BoundaryCyclic: the boundary is periodic with anothe boundary, so that agents leaving
-					this boundary will enter through the other, and vice-versa; solute concentrations
-					are constant across the two boundaries. You must specify the two faces (<shape>s)
-					that are to be connected this way.
-				- BoundaryGasMembrane: a boundary that is impermeable to agents and most solutes, but
-					permeable to a specified solute (used to represent gas transfer membranes).
-					Parameters include:
-					* You must specify a bulk compartment and the solute able to permeate:
-						<param name="isPermeableTo" detail="glucose" unit="m2.day-1">1</param>
-					* 'bulk': this will be different than the 'bulk' for BoundaryBulk:
-						<param name="bulk">MyGasMembraneBulk</param>
-
-			-->
-
 			<boundaryCondition class="BoundaryZeroFlux" name="y0z">
 				<shape class="Planar">
 					<param name="pointIn" i="-1" j="0" k="0"/>
@@ -389,7 +328,7 @@ A few general points about protocol files:
 	-->
 
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MyGlycolysis">
-		<param name="muMax" unit="hour-1">0.0417</param>
+		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
 			<param name="Ki" unit="g.L-1">1.5e-3</param>
 		</kineticFactor>
@@ -480,7 +419,7 @@ A few general points about protocol files:
 
 	<solver class="Solver_chemostat" name="solver1" domain="chemostat">
 		<param name="rtol">1e-2</param>
-	 	<param name="hmax">1e-3</param>
+	 	<param name="hmax">1e-7</param>
 		<param name="active">true</param>
 
 		<reaction name="MySolventogenesis"/>
@@ -531,7 +470,7 @@ A few general points about protocol files:
 		<param name="shoveFactor" unit="um">1.15</param>
 		<param name="shoveLimit" unit="um">0.0</param>
 		
-		<param name="hmax">1e-4</param>
+		<param name="hmax">1e-7</param>
 
 		<param name="epsMax">0.1</param>
 
@@ -577,7 +516,7 @@ A few general points about protocol files:
 		<param name="shoveFactor" unit="um">1.15</param>
 		<param name="shoveLimit" unit="um">0.0</param>
 		
-		<param name="hmax">1e-4</param>
+		<param name="hmax">1e-7</param>
 		
 		<param name="epsMax">0.1</param>
 		<param name="kHyd" unit="hr-1">0.007</param>

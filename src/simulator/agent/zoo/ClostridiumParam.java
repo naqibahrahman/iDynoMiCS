@@ -17,13 +17,14 @@ public class ClostridiumParam extends GeneRegBacParam
 	/** 
 	 * Clostridium default parameters
 	 */
-	
 	/*
 	 * Reaction indices
 	 */
 	protected ArrayList<Integer> onSporulation;
 	protected ArrayList<Integer> offAllReactions;
 	protected ArrayList<Integer> onSolventogenesis;
+	
+	
 	/*
 	 * Production 
 	 */
@@ -86,35 +87,40 @@ public class ClostridiumParam extends GeneRegBacParam
 	public Double lambda_Ph = 7.2;  // h-1
 	public Double lambda_PhP = 7.2;  // h-1
 	public Double lambda_C = 7.2;  // h-1
+	
 	/*
 	 * Autophosphorylation
 	 */
 	public Double alpha = 360.0;  // h-1
 	
 	/*
-	 * Phosphotransfer
+	 * Phosphotransfer 
 	 */
 	public Double phi_KP_SA = 3.6; // uM-1 h-1
 	public Double phi_SAP_K = 3.6; // uM-1 h-1
 	public Double phi_AP_SA = 3.6; // uM-1 h-1
 	public Double phi_SAP_Ph = 3.6; // uM-1 h-1
 	public Double phi_RP_A = 3.6; // uM-1 h-1
+	
 	/*
-	 * Dephosphorylation
+	 * Dephosphorylation 
 	 */
 	public Double psi_AP = 1.44; // h-1
 	public Double psi_KP = 1.44; // h-1
 	public Double psi_SAP = 1.44; // h-1
 	public Double psi_PhP = 1.44; // h-1
+	
 	/*
 	 * Transport
 	 */
 	public Double mu_e = 3600.0; //  h-1
 	public Double mu_i = 3600.0; // h-1
+	
 	/*
 	 * Movement to cell membrane
 	 */
 	public Double mu_agr = 3600.0; // h-1
+	
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis and/or sporulation.
