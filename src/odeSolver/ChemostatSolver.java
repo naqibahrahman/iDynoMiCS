@@ -21,9 +21,9 @@ public class ChemostatSolver extends ODEsolver
 	protected Double[] _catalysts;
 	
 	public void init(int nVar, Double dilution, ArrayList<Reaction> reactions,
-													Double hmax, Double rtol)
+											Double hmax, Double rtol, Double atol)
 	{
-		super.init(nVar, false, hmax, rtol);
+		super.init(nVar, false, hmax, rtol, atol);
 		this._dilution = dilution;
 		this._reactions = reactions;
 		this._nReac = this._reactions.size();

@@ -2,6 +2,7 @@ package odeSolver;
 
 
 import utils.LogFile;
+import utils.XMLParser;
 import Jama.Matrix;
 
 public abstract class ODEsolver
@@ -34,7 +35,15 @@ public abstract class ODEsolver
 	
 	protected Double _hmax;
 	
-	protected Double _rtol;
+	/**
+	 * Relative tolerance of the calculated error. Used in the ODE solver
+	 */
+	protected Double _rtol = null;
+	
+	/**
+	 * Absolute tolerance of the calculated error. Used in the ODE solver
+	 */
+	protected Double _atol = null;
 	
 	/**
 	 * Number of variables in the solver.
@@ -56,7 +65,8 @@ public abstract class ODEsolver
 	
 	protected Matrix _f1, _f2, _W, _invW, _k1, _k2, _k3, _kaux;
 	
-	protected Double _t, _error, _tnext, _tdel, _h, _test;
+	protected Double _t, _tol, _error, _relError, _absError, _tnext,
+													_tdel, _h, _test;
 	
 	protected Boolean lastStep, noFailed, usingHMin;
 	
@@ -69,12 +79,14 @@ public abstract class ODEsolver
 		
 	}
 	
-	public void init(int nVar, Boolean allowNegatives, Double hmax, Double rtol)
+	public void init(int nVar, Boolean allowNegatives, Double hmax,
+									Double rtol, Double atol)
 	{
 		this._nVar = nVar;
 		this._allowNegatives = allowNegatives;
 		this._hmax = hmax;
 		this._rtol = rtol;
+		this._atol = atol;
 		
 		_ynext = new Matrix(nVar, 1, 0.0);
 		_dYdT  = new Matrix(nVar, 1, 0.0);
@@ -114,6 +126,7 @@ public abstract class ODEsolver
 		 */
 		Double hmax = _hmax;
 		Double rtol = _rtol;
+		Double atol = _atol;
 		/*
 		 * Control statement in case the maximum timestep size, hmax, is too
 		 * large.
@@ -121,7 +134,10 @@ public abstract class ODEsolver
 		while ( hmax > tfinal )
 		{
 			hmax *= 0.5;
-			rtol *= 0.5;
+			try { rtol *= 0.5;}
+			catch (Exception e) {}
+			try { atol *= 0.5;}
+			catch (Exception e) {}
 		}
 		/*
 		 * First try a step size of hmax.
@@ -212,13 +228,37 @@ public abstract class ODEsolver
 					/*
 					 * We now use kaux to estimate the error of this step.
 					 */
-					for (int i = 0; i < _nVar; i++)
-						_kaux.set(i, 0, 1/Math.min(y.get(i,0), _ynext.get(i,0)));
 					_kaux.arrayTimesEquals(
-								_k1.minus(_k2.times(2)).plus(_k3).times(_h/6));
+							_k1.minus(_k2.times(2)).plus(_k3).times(_h/6));
+					/*
+					 * We now calculate the error
+					 */
 					_error = 0.0;
+					_relError = 0.0;
+					_absError = 0.0;
 					for (int i = 0; i < _nVar; i++)
-						_error = Math.max(_error, _kaux.get(i,0));
+					{
+						_absError = Math.max(_absError, _kaux.get(i,0));
+						_relError = Math.max(_relError, _kaux.get(i,0) /
+									Math.min(y.get(i,0), _ynext.get(i,0)));
+					}
+					/*
+					 * If only one of the tolerances is set, use that one.
+					 * Otherwise, determine which scheme has the largest
+					 * error.
+					 */
+					if ( atol == XMLParser.nullDbl || 
+						(rtol != XMLParser.nullDbl && 
+										_relError/rtol > _absError/atol) )
+					{
+						_error = _relError;
+						_tol = rtol;
+					}
+					else
+					{
+						_error = _absError;
+						_tol = atol;
+					}
 				}
 				catch (Exception e)
 				{

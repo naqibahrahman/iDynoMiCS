@@ -6,10 +6,11 @@ import idyno.SimTimer;
 import simulator.Simulator;
 import simulator.SoluteGrid;
 import utils.ExtraMath;
+import utils.LogFile;
 import utils.XMLParser;
 
-public class Clostridium extends GeneRegBac {
-
+public class Clostridium extends GeneRegBac
+{
 	private SoluteGrid _aipGrid;
 	private SoluteGrid _acidGrid;
 	private SoluteGrid _solventGrid;
@@ -27,56 +28,59 @@ public class Clostridium extends GeneRegBac {
 		
 		this._numProtTypes = 16;
 		
+		/*
+		 * All protein concentrations are in: M 
+		 */
 		_proteinNames = new String[_numProtTypes];
 		_proteinLevels = new Double[_numProtTypes];
 		
 		_proteinNames[0] = "SA";
-		_proteinLevels[0] = 17.5;
+		_proteinLevels[0] = 17.5e-6;
 		
 		_proteinNames[1] = "SAP";
-		_proteinLevels[1] = 5.0;
+		_proteinLevels[1] = 5.0e-6;
 		
 		_proteinNames[2] = "K";
-		_proteinLevels[2] = 0.01;
+		_proteinLevels[2] = 0.01e-6;
 		
 		_proteinNames[3] = "KP";
-		_proteinLevels[3] = 0.04;
+		_proteinLevels[3] = 0.04e-6;
 		
 		_proteinNames[4] = "Ph";
-		_proteinLevels[4] = 0.05;
+		_proteinLevels[4] = 0.05e-6;
 		
 		_proteinNames[5] = "PhP";
-		_proteinLevels[5] = 0.125;
+		_proteinLevels[5] = 0.125e-6;
 		
 		_proteinNames[6] = "Ab";
-		_proteinLevels[6] = 0.006;
+		_proteinLevels[6] = 6.0e-9;
 		
 		_proteinNames[7] = "SigmaH";
-		_proteinLevels[7] = 0.1;
+		_proteinLevels[7] = 0.1e-6;
 		
 		_proteinNames[8] = "A";
-		_proteinLevels[8] = 1.7;
+		_proteinLevels[8] = 1.7e-6;
 		
 		_proteinNames[9] = "AP";
-		_proteinLevels[9] = 0.16;
+		_proteinLevels[9] = 0.16e-6;
 		
 		_proteinNames[10] = "B";
-		_proteinLevels[10] = 0.04;
+		_proteinLevels[10] = 0.04e-6;
 		
 		_proteinNames[11] = "C";
-		_proteinLevels[11] = 0.004;
+		_proteinLevels[11] = 4.0e-9;
 		
 		_proteinNames[12] = "S";
-		_proteinLevels[12] = 0.00001;
+		_proteinLevels[12] = 0.01e-9;
 		
 		_proteinNames[13] = "T";
-		_proteinLevels[13] = 0.00001;
+		_proteinLevels[13] = 0.01e-9;
 		
 		_proteinNames[14] = "R";
-		_proteinLevels[14] = 0.002;
+		_proteinLevels[14] = 2.0e-9;
 		
 		_proteinNames[15] = "RP";
-		_proteinLevels[15] = 1.850;
+		_proteinLevels[15] = 1.85e-6;
 		
 
 		
@@ -177,6 +181,7 @@ public class Clostridium extends GeneRegBac {
 		 */
 
 		updateExternal();
+		//LogFile.chronoMessageIn();
 		this._regulationSolver.setReferenceAgent(this);
 		Matrix y = new Matrix(this._proteinLevels.length, 1);
 		for ( int i = 0; i < this._proteinLevels.length; i++ )
@@ -184,7 +189,8 @@ public class Clostridium extends GeneRegBac {
 		y = this._regulationSolver.solve(y, _agentGrid.AGENTTIMESTEP);
 		for ( int i = 0; i < this._proteinLevels.length; i++ )
 			this._proteinLevels[i] = y.get(i, 0);
-
+		//LogFile.chronoMessageOut("Gene regulation solved");
+		
 		checkSpo0A();
 		secretesAIP();
 		updateExternal();
@@ -251,7 +257,6 @@ public class Clostridium extends GeneRegBac {
 	{
 		_aipConc = this._aipGrid.getValueAt(this._location);
 		_acidConc = this._acidGrid.getValueAt(this._location);
-		//_solventConc = this._solventGrid.getValueAt(this._location);
 	}
 	
 	private Double activate(Double c, Double B, Double U, Double factor)
@@ -781,9 +786,9 @@ public class Clostridium extends GeneRegBac {
 		Double T = _proteinLevels[13];
 		Double R = _proteinLevels[14];
 		Double RP = _proteinLevels[15];
-		Double AIPrate = _aipConc;
+		Double AIPrate = 0.0;
 		AIPrate += getSpeciesParam().k_agr*T*S;
-		AIPrate -= getSpeciesParam().beta_RP*R;
+		AIPrate -= getSpeciesParam().beta_RP*R*_aipConc;
 		AIPrate += getSpeciesParam().gamma_RP*RP;
 		
 	// dilution 
@@ -791,6 +796,8 @@ public class Clostridium extends GeneRegBac {
 		AIPrate *= this._volume/_aipGrid.getVoxelVolume();
 		
 		AIPrate *= SimTimer.getCurrentTimeStep();
+		
+		AIPrate += _aipConc;
 		
 		Double rate = Math.max(AIPrate, 0.0);
 		

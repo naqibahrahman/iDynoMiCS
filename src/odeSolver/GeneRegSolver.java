@@ -28,9 +28,9 @@ public class GeneRegSolver extends ODEsolver
 	/**
 	 * 
 	 */
-	public void init(int nVar, Double hmax, Double rtol)
+	public void init(int nVar, Double hmax, Double rtol, Double atol)
 	{
-		super.init(nVar, false, hmax, rtol);
+		super.init(nVar, false, hmax, rtol, atol);
 	}
 	
 	public void setReferenceAgent(GeneRegBac aCell)

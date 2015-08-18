@@ -3,6 +3,7 @@ package simulator.agent.zoo;
 import Jama.Matrix;
 import odeSolver.GeneRegSolver;
 import simulator.Simulator;
+import utils.LogFile;
 import utils.XMLParser;
 
 public abstract class GeneRegBac extends Bacterium implements Cloneable
@@ -52,7 +53,7 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		super.initFromProtocolFile(aSim, aSpeciesRoot);
 		
 		_regulationSolver.init(_numProtTypes, getSpeciesParam().hmax, 
-												getSpeciesParam().rtol);
+							getSpeciesParam().rtol, getSpeciesParam().atol);
 		_regulationSolver.setReferenceAgent(this);
 	}
 	

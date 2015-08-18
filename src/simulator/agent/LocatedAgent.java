@@ -158,6 +158,8 @@ public abstract class LocatedAgent extends ActiveAgent implements Cloneable
 											this._divisionDirection.clone();
 		o._myNeighbors = (LinkedList<LocatedAgent>) this._myNeighbors.clone();
 		o._agentGridIndex = this._agentGridIndex;
+		o._myDivRadius = getDivRadius();
+		o._myDeathRadius = getDeathRadius();
 		return o;
 	}
 	

@@ -1,6 +1,7 @@
 package simulator.agent.zoo;
 
 import simulator.Simulator;
+import utils.LogFile;
 import utils.XMLParser;
 
 /**
@@ -16,7 +17,9 @@ public class GeneRegBacParam extends BacteriumParam
 	/**
 	 * 
 	 */
-	public Double rtol = 0.001;
+	public Double rtol;
+	
+	public Double atol;
 	
 	/**
 	 * 
@@ -35,12 +38,17 @@ public class GeneRegBacParam extends BacteriumParam
 													XMLParser speciesDefaults)
 	{
 		super.init(aSim,aSpeciesRoot,speciesDefaults);
-		Double value;
 		
-		value = getSpeciesParameterDouble("rtol", aSpeciesRoot, speciesDefaults);
-		rtol = Double.isNaN(value) ? rtol : value;
+		rtol = getSpeciesParameterDouble("rtol", aSpeciesRoot, speciesDefaults);
+		atol = getSpeciesParameterDouble("atol", aSpeciesRoot, speciesDefaults);
+		if ( rtol == XMLParser.nullDbl && atol == XMLParser.nullDbl )
+		{
+			LogFile.writeLogAlways(
+						"WARNING! No tolerance set in the chemostat solver.");
+		}
 		
-		value = getSpeciesParameterDouble("hmax", aSpeciesRoot, speciesDefaults);
+		Double value = 
+			getSpeciesParameterDouble("hmax", aSpeciesRoot, speciesDefaults);
 		hmax = Double.isNaN(value) ? hmax : value;
 		
 	}

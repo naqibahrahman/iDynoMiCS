@@ -28,37 +28,37 @@ public class ClostridiumParam extends GeneRegBacParam
 	/*
 	 * Production 
 	 */
-	public Double c_H = 2.88e-05; // uM cell-1 ml h-1
-	public Double c_K = 0.36; // uM h-1
-	public Double c_agr_l = 1.44; // uM h-1
-	public Double c_SA_l = 1.44; // uM h-1
-	public Double c_SA_2l = 1.44; // uM h-1
-	public Double c_Ph = 1.44; // uM h-1
-	public Double c_Ab_1 = 1.44; // uM h-1
-	public Double c_Ab_2 = 1.44; // uM h-1
-	public Double c_sigmaH = 1.44; // uM h-1
-	public Double k_agr = 1440000.0; // uM-1 h-1
-	public Double c_agr_CA = 14.4; // uM h-1
-	public Double c_agr_h = 144.0; // uM h-1
-	public Double c_SA_2h = 144.0; // uM h-1
+	public Double c_H = 2.88e-8; //M cell-1 L h-1
+	public Double c_K = 3.6e-07; //M h-1
+	public Double c_agr_l = 1.44e-06; //M h-1
+	public Double c_SA_l = 1.44e-06; //M h-1
+	public Double c_SA_2l = 1.44e-06; //M h-1
+	public Double c_Ph = 1.44e-06; //M h-1
+	public Double c_Ab_1 = 1.44e-06; //M h-1
+	public Double c_Ab_2 = 1.44e-06; //M h-1
+	public Double c_sigmaH = 1.44e-06; //M h-1
+	public Double k_agr = 1.44e+12; //M-1 h-1
+	public Double c_agr_CA = 1.44e-05; //M h-1
+	public Double c_agr_h = 0.000144; //M h-1
+	public Double c_SA_2h = 0.000144; //M h-1
 	/*
 	 * DNA unbinding
 	 */
-	public Double U_SAP_SA = 0.02; // uM
-	public Double U_sigmaH_SA = 0.02; // uM
-	public Double U_AP_agr = 0.02; // uM
-	public Double U_Ab_Ab = 0.02; // uM
-	public Double U_SAP_Ab = 0.02; // uM
-	public Double U_Ab_sigmaH = 0.02; // uM
+	public Double U_SAP_SA = 2e-08; //M
+	public Double U_sigmaH_SA = 2e-08; //M
+	public Double U_AP_agr = 2e-08; //M
+	public Double U_Ab_Ab = 2e-08; //M
+	public Double U_SAP_Ab = 2e-08; //M
+	public Double U_Ab_sigmaH = 2e-08; //M
 	/*
 	 * DNA binding
 	 */
-	public Double B_SAP_SA = 0.02; // uM
-	public Double B_sigmaH_SA = 0.02; // uM
-	public Double B_AP_agr = 0.02; // uM
-	public Double B_Ab_Ab = 0.02; // uM
-	public Double B_SAP_Ab = 0.02; // uM
-	public Double B_Ab_sigmaH = 0.02; // uM
+	public Double B_SAP_SA = 2e-08; //M
+	public Double B_sigmaH_SA = 2e-08; //M
+	public Double B_AP_agr = 2e-08; //M
+	public Double B_Ab_Ab = 2e-08; //M
+	public Double B_SAP_Ab = 2e-08; //M
+	public Double B_Ab_sigmaH = 2e-08; //M
 	/*
 	 * Complex separation
 	 */
@@ -96,11 +96,11 @@ public class ClostridiumParam extends GeneRegBacParam
 	/*
 	 * Phosphotransfer 
 	 */
-	public Double phi_KP_SA = 3.6; // uM-1 h-1
-	public Double phi_SAP_K = 3.6; // uM-1 h-1
-	public Double phi_AP_SA = 3.6; // uM-1 h-1
-	public Double phi_SAP_Ph = 3.6; // uM-1 h-1
-	public Double phi_RP_A = 3.6; // uM-1 h-1
+	public Double phi_KP_SA = 3600000.0; //M-1 h-1
+	public Double phi_SAP_K = 3600000.0; //M-1 h-1
+	public Double phi_AP_SA = 3600000.0; //M-1 h-1
+	public Double phi_SAP_Ph = 3600000.0; //M-1 h-1
+	public Double phi_RP_A = 3600000.0; //M-1 h-1
 	
 	/*
 	 * Dephosphorylation 
@@ -125,7 +125,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis and/or sporulation.
 	 */
-	public Double spo0APthresh = 6.0; // uM
+	public Double spo0APthresh = 10e-06; //M
 	
 	/**
 	 * Threshold spore mass triggering the end of sporulation.

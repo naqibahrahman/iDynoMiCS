@@ -22,13 +22,10 @@ mass_unit = 'fg'
 mass_scalar = 1e-15
 time_unit = 'h'
 time_scalar = 3600
-concn_unit = 'M'
+concn_unit = ' M'
 concn_scalar = 1e0
-vol_unit = 'L'
-vol_scalar = 1e-3
-
-
-old_concn = 'uM\n'
+vol_unit = ' L'
+vol_scalar = 1e0
 
 #############################################################################
 
@@ -63,8 +60,6 @@ convert = {
 'fL' : [vol_scalar*1e15, vol_unit],
 
 }
-
-print convert['nM']
 
 def convert_param(value, units):
     '''
@@ -133,6 +128,13 @@ for i in range(len(lines)):
     line = lines[i]
     if '}' in line:
         break
+    if 'All protein concentrations are in:' in line:
+        [start, old_concn] = re.split(':', line)
+        old_concn = old_concn.replace('\n', '')
+        if old_concn == concn_unit:
+            break
+        else:
+             lines[i] = line.replace(old_concn, concn_unit)
     if '_proteinNames[' in line:
         [start, value, units] = re.split('=|;', line)
         current_name = value
