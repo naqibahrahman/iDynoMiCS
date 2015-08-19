@@ -28,8 +28,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	/*
 	 * Production 
 	 */
-	public Double c_H = 2.88e-8; //M cell-1 L h-1
-	public Double c_K = 3.6e-07; //M h-1
+	public Double c_K = 360.0e-09; //M h-1
 	public Double c_agr_l = 1.44e-06; //M h-1
 	public Double c_SA_l = 1.44e-06; //M h-1
 	public Double c_SA_2l = 1.44e-06; //M h-1
@@ -38,9 +37,9 @@ public class ClostridiumParam extends GeneRegBacParam
 	public Double c_Ab_2 = 1.44e-06; //M h-1
 	public Double c_sigmaH = 1.44e-06; //M h-1
 	public Double k_agr = 1.44e+12; //M-1 h-1
-	public Double c_agr_CA = 1.44e-05; //M h-1
-	public Double c_agr_h = 0.000144; //M h-1
-	public Double c_SA_2h = 0.000144; //M h-1
+	public Double c_agr_CA = 14.4e-06; //M h-1
+	public Double c_agr_h = 144.0e-06; //M h-1
+	public Double c_SA_2h = 144.0e-06; //M h-1
 	/*
 	 * DNA unbinding
 	 */
@@ -66,7 +65,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	/*
 	 * Complex formation
 	 */
-	public Double beta_RP = 298.8;  // h-1
+	public Double beta_RP = 1.0e+9;  // M-1 h-1
 	/*
 	 * Degradation
 	 */
@@ -165,9 +164,6 @@ public class ClostridiumParam extends GeneRegBacParam
 		Double value;
 		
 		// Production
-		
-		value = getSpeciesParameterDouble("c_H", aSpeciesRoot, speciesDefaults);
-		c_H = Double.isNaN(value) ? c_H : value;
 		
 		value = getSpeciesParameterDouble("c_K", aSpeciesRoot, speciesDefaults);
 		c_K = Double.isNaN(value) ? c_K : value;
