@@ -319,7 +319,7 @@ public class Clostridium extends GeneRegBac
 		Double bottom = 0.0;
 			
 		top = getSpeciesParam().c_K*_acidConc;
-		bottom = _acidConc + 1;
+		bottom = _acidConc + getSpeciesParam().hs;
 		rate = top/bottom;
 			
 		rate -= getSpeciesParam().alpha*K;

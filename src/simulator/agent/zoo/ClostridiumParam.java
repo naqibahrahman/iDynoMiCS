@@ -121,6 +121,13 @@ public class ClostridiumParam extends GeneRegBacParam
 	 */
 	public Double mu_agr = 3600.0; // h-1
 	
+	/*
+	 * Half saturation
+	 */
+	public Double hs = 1e-9; // M
+	
+	
+	
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis and/or sporulation.
