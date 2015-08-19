@@ -3,6 +3,8 @@ package simulator.agent.zoo;
 import Jama.Matrix;
 import odeSolver.GeneRegSolver;
 import simulator.Simulator;
+import simulator.geometry.ContinuousVector;
+import utils.ExtraMath;
 import utils.LogFile;
 import utils.XMLParser;
 
@@ -44,7 +46,9 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 		out._regulationSolver = this._regulationSolver;
 		out._numProtTypes = this._numProtTypes;
 		out._proteinNames = this._proteinNames;
-		out._proteinLevels = this._proteinLevels;
+		out._proteinLevels = new Double[this._numProtTypes];
+		for ( int i = 0; i < this._numProtTypes; i++ )
+			out._proteinLevels[i] = this._proteinLevels[i];
 		return out;
 	}
 	
@@ -74,6 +78,53 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 			remainingSingleAgentData[i] = singleAgentData[i];
 		super.initFromResultFile(aSim, remainingSingleAgentData);
 	}
+	
+	/**
+	 * \brief Create a new agent in a specified position.
+	 * 
+	 * <p>Copied from the same method in LocatedAgent, but with the method
+	 * {@link #randomiseProteinLevels()} added.</p>
+	 * 
+	 * @param position	Vector stating where this agent should be located.
+	 */
+	@Override
+	public void createNewAgent(ContinuousVector position) 
+	{
+		System.out.println("Progenitor "+_proteinNames[5]+" is "+_proteinLevels[5]); //BUGHUNT
+		try 
+		{
+			// Get a clone of the progenitor.
+			GeneRegBac baby = (GeneRegBac) sendNewAgent();
+			baby.giveName();
+			baby.updateSize();
+			
+			this._myDivRadius = getDivRadius();
+			baby._myDivRadius = getDivRadius();
+			baby._myDeathRadius = getDeathRadius();
+			
+			// Just to avoid to be in the carrier.
+			// TODO Rob 13Mar2015: Is this correct?
+			position.x += this._totalRadius;
+			
+			baby.setLocation(position);
+			baby.registerBirth();
+			baby.randomiseProteinLevels();
+		} 
+		catch (CloneNotSupportedException e) 
+		{
+			LogFile.writeError(e, "GeneRegBac.createNewAgent()");
+		}
+	}
+	
+	protected void randomiseProteinLevels()
+	{
+		double cv = getSpeciesParam().initialProteinCV;
+		if ( cv == 0.0 )
+			return;
+		for ( int i = 0; i < _numProtTypes; i++ )
+			_proteinLevels[i] = ExtraMath.deviateFromCV(_proteinLevels[i], cv);
+	}
+	
 	public abstract Matrix calc1stDeriv(Matrix levels);
 	
 	public abstract Matrix calcJacobian(Matrix levels);

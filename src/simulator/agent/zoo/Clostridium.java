@@ -6,7 +6,6 @@ import idyno.SimTimer;
 import simulator.Simulator;
 import simulator.SoluteGrid;
 import utils.ExtraMath;
-import utils.LogFile;
 import utils.XMLParser;
 
 public class Clostridium extends GeneRegBac
@@ -81,11 +80,7 @@ public class Clostridium extends GeneRegBac
 		
 		_proteinNames[15] = "RP";
 		_proteinLevels[15] = 1.85e-6;
-		
-
-		
 	}
-	
 	
 	public Object clone() throws CloneNotSupportedException
 	{
