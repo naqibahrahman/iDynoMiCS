@@ -17,7 +17,11 @@ public class Clostridium extends GeneRegBac
 	private Double _aipConc;
 	private Double _acidConc;
 	
+	private int _sporeIndex;
+	
 	private String _sporeStatus = "noSpore";
+	
+	private String _metabolismStatus = "glycolysis";
 	
 	public Clostridium()
 	{
@@ -157,7 +161,17 @@ public class Clostridium extends GeneRegBac
 		 */
 		if ( this._sporeStatus.equals("sporulating") )
 		{
-			if ( this.particleMass[1] >= getSpeciesParam().sporeThresh) 
+			double spRad = this.particleMass[this._sporeIndex] /
+						getSpeciesParam().particleDensity[this._sporeIndex];
+			if ( Simulator.isChemostat || _species.domain.is3D )
+				spRad = ExtraMath.radiusOfASphere(spRad);
+			else
+			{
+				spRad = ExtraMath.radiusOfACylinder(spRad,
+													_species.domain.length_Z);
+			}
+			
+			if ( spRad >= this._myDivRadius * getSpeciesParam().spo0APsporeThresh ) 
 			{
 				// turn off all reactions
 		
@@ -222,6 +236,7 @@ public class Clostridium extends GeneRegBac
 		this._aipGrid = aSim.getSolute("aip");
 		this._acidGrid = aSim.getSolute("acid");
 		this._solventGrid = aSim.getSolute("solvent");
+		this._sporeIndex = aSim.getParticleIndex("spore");
 	}
 	
 	@Override
@@ -237,8 +252,9 @@ public class Clostridium extends GeneRegBac
 		/*
 		 * Set the spore status variable.
 		 */
-		int iDataStart = singleAgentData.length - 1;
-		this._sporeStatus = singleAgentData[iDataStart];
+		int iDataStart = singleAgentData.length - 2;
+		this._metabolismStatus = singleAgentData[iDataStart];
+		this._sporeStatus = singleAgentData[iDataStart+1];
 		/*
 		 * Now go up the hierarchy with the rest of the data.
 		 */
@@ -803,14 +819,18 @@ public class Clostridium extends GeneRegBac
 	public void checkSpo0A()
 	{
 		Double SAP = this._proteinLevels[1];
-		if ( SAP > getSpeciesParam().spo0APthresh )
-		{
-			for ( int aReac : getSpeciesParam().offAllReactions )
-				switchOffreaction(allReactions[aReac]);
-			for ( int aReac : getSpeciesParam().onSolventogenesis )
-				switchOnReaction(allReactions[aReac]);
-			
-			if ( this._sporeStatus.equals("canSpore") )
+		if ( this._metabolismStatus == "glycolysis" )
+			if ( SAP > getSpeciesParam().spo0APsolventThresh )
+			{
+				for ( int aReac : getSpeciesParam().offAllReactions )
+					switchOffreaction(allReactions[aReac]);
+				for ( int aReac : getSpeciesParam().onSolventogenesis )
+					switchOnReaction(allReactions[aReac]);
+				this._metabolismStatus = "solventogenesis";
+			}
+		
+		if ( this._sporeStatus.equals("canSpore") )
+			if ( SAP > getSpeciesParam().spo0APsporeThresh )
 			{
 				/*
 				 * Turn on the reactions that should now be on.
@@ -819,7 +839,6 @@ public class Clostridium extends GeneRegBac
 					switchOnReaction(allReactions[aReac]);
 				this._sporeStatus = "sporulating";
 			}
-		}
 	}
 
 
@@ -833,7 +852,7 @@ public class Clostridium extends GeneRegBac
 	{
 		// return the header file for this agent's values after sending those for super
 		StringBuffer tempString = super.sendHeader();
-		tempString.append(",sporeStatus");
+		tempString.append(",metabolismStatus,sporeStatus");
 		return tempString;
 	}
 	
@@ -842,7 +861,7 @@ public class Clostridium extends GeneRegBac
 	{
 		// write the data matching the header file
 		StringBuffer tempString = super.writeOutput();
-		tempString.append(","+this._sporeStatus);
+		tempString.append(","+this._metabolismStatus+","+this._sporeStatus);
 		return tempString;
 	}
 }

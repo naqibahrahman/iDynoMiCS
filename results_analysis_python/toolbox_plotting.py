@@ -22,6 +22,10 @@ def mm2inch(mm):
     return mm*0.0393700787
 
 
+# Used by axis ticks. Switch to scientific notation if values are less than
+# 10^-3 or greater than 10^4.
+scientific_notation_powers = (-3, 4)
+
 class JournalFigure:
     def __init__(self):
         self.subplots = {}
@@ -42,7 +46,10 @@ class JournalFigure:
         axis = self.fig.add_subplot(position, aspect=aspect,
                                      axisbg=axisbg, projection=projection)
         # Moved frameon here as the keyword was causing problems in 3D plots
-        if not frameon:
+        if frameon:
+            axis.xaxis.get_major_formatter().set_powerlimits((-3, 4))
+            axis.yaxis.get_major_formatter().set_powerlimits((-3, 4))
+        else:
             axis.axis('off')
         setp( axis.get_xticklabels(), visible=frameon)
         setp( axis.get_yticklabels(), visible=frameon)
@@ -454,7 +461,9 @@ def make_colorbar(axis, colorscheme, side="right", fontsize=10, pad=0.04):
     cax = padding_axis(axis, side=side, pad=pad)
     orientation = 'vertical' if side in ["right", "left"] else 'horizontal'
     cbar = pyplot.colorbar(colorscheme, cax=cax, orientation=orientation)
+    cbar.formatter.set_powerlimits((-3, 4))
     cbar.ax.tick_params(labelsize=fontsize)
+    cbar.update_ticks()
     return cbar
 
 

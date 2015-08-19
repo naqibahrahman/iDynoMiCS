@@ -97,7 +97,7 @@ def plot(iter_info, min_max_concns):
         axis.fill_between([0, nJ*res], [0]*2, y2=[-res]*2, color='k', zorder=-1)
     lb = 0.01
     if options.frameon:
-        lb = 0.06
+        lb = 0.12
         figure.process_lines()
     figure.subplots_adjust(left=lb, bottom=lb, right=0.9, top=0.9)
     figure.inset_axes()
@@ -116,7 +116,7 @@ def plot(iter_info, min_max_concns):
         axis.set_xlabel(r'x ($\mu$m)')
         axis.set_ylabel(r'y ($\mu$m)')
     if options.timeon:
-        axis.text(0.1*res, (nI+0.1)*res, 'Time: %d h'%(int(iter_info.time)),
+        axis.text(0.1*res, (nI+0.1)*res, 'Time: %.2f h'%(iter_info.time),
                   va='bottom', ha='left', color='0.5')
     axis.set_xlim(0, nJ * res)
     axis.set_ylim(-res, nI * res)

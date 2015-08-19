@@ -130,14 +130,22 @@ public class ClostridiumParam extends GeneRegBacParam
 	
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
-	 * solventogenesis and/or sporulation.
+	 * sporulation.
 	 */
-	public Double spo0APthresh = 10e-06; //M
+	public Double spo0APsporeThresh = 10e-06; //M
 	
 	/**
-	 * Threshold spore mass triggering the end of sporulation.
+	 * Threshold intracellular Spo0A~P concentration triggering
+	 * solventogenesis.
 	 */
-	public Double sporeThresh = 6000.0; // fg
+	public Double spo0APsolventThresh = 10e-06; //M
+	
+	/**
+	 * Threshold the spore mass much reach before the cell has achieved spore
+	 * status. This is the ratio of the spore radius to the cell's division
+	 * radius.
+	 */
+	public Double sporeRadiusFrac = 0.5; 
 	
 	/**
 	 * Probability that a newly-created daughter cell will sporulate if the 
@@ -366,11 +374,14 @@ public class ClostridiumParam extends GeneRegBacParam
 		//rho = Double.isNaN(value) ? rho : value;
 		
 		//Threshold
-		value = getSpeciesParameterDouble("Spo0Athresh", aSpeciesRoot, speciesDefaults);
-		spo0APthresh = Double.isNaN(value) ? spo0APthresh : value;
+		value = getSpeciesParameterDouble("spo0APsporeThresh", aSpeciesRoot, speciesDefaults);
+		spo0APsporeThresh = Double.isNaN(value) ? spo0APsporeThresh : value;
 		
-		value = getSpeciesParameterDouble("SporeThresh", aSpeciesRoot, speciesDefaults);
-		sporeThresh = Double.isNaN(value) ? sporeThresh : value;
+		value = getSpeciesParameterDouble("spo0APsolventThresh", aSpeciesRoot, speciesDefaults);
+		spo0APsolventThresh = Double.isNaN(value) ? spo0APsolventThresh : value;
+		
+		value = getSpeciesParameterDouble("sporeRadiusFrac", aSpeciesRoot, speciesDefaults);
+		sporeRadiusFrac = Double.isNaN(value) ? sporeRadiusFrac : value;
 		
 		//Probability
 		value = getSpeciesParameterDouble("sporeProb", aSpeciesRoot, speciesDefaults);

@@ -90,7 +90,6 @@ public abstract class GeneRegBac extends Bacterium implements Cloneable
 	@Override
 	public void createNewAgent(ContinuousVector position) 
 	{
-		System.out.println("Progenitor "+_proteinNames[5]+" is "+_proteinLevels[5]); //BUGHUNT
 		try 
 		{
 			// Get a clone of the progenitor.

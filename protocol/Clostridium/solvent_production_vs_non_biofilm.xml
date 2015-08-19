@@ -296,6 +296,9 @@
 		<param name="babyMassFracCV">0.05</param>
 		<param name="shoveFactor" unit="um">1.15</param>
 		<param name="shoveLimit" unit="um">0.0</param>
+		<!-- Non-solventogenic species, so threshold is unrealistically high -->
+		<param name="spo0APsolventThresh">1E100</param>
+		
 		<reaction name="MyGlycolysis"       status="active"/>
 		<reaction name="MySolventogenesis"  status="inactive"/>
 		<reaction name="MySporeProduction1" status="inactive"/>
