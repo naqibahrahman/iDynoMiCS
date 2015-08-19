@@ -121,75 +121,75 @@ Note that in in this file, standard units are
 	</world>
 
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MyGlycolysis">
-		<param name="muMax" unit="hour-1">0.0417</param>
+		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="glucose">
-			<param name="Ks" unit="g.L-1">0.5e-6</param>
+			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
-			<param name="acid" unit="g.g-1">1.587</param>
-			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="acid" unit="g.g-1">0.625</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
 			<param name="biomass" unit="g.g-1">1.0</param>
 	
 		</yield>
 	</reaction>
 
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySolventogenesis">
-		<param name="muMax" unit="hour-1">0.0417</param>
+		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="acid">
-			<param name="Ks" unit="g.L-1">0.5e-3</param>
+			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
-			<param name="solvent" unit="g.g-1">1.587</param>
-			<param name="acid" unit="g.g-1">-6.25</param>
-			<param name="biomass" unit="g.g-1">1.0</param>
+			<param name="solvent" unit="g.g-1">1.5</param>
+			<param name="acid" unit="g.g-1">-0.375</param>
+			<param name="biomass" unit="g.g-1">0.5</param>
 			
 		</yield>
 	</reaction>
 	
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MySporeProduction1">
-		<param name="muMax" unit="hour-1">0.0417</param>
+		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="acid">
-			<param name="Ks" unit="g.L-1">0.5e-3</param>
+			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
-			<param name="spore" unit="g.g-1">1</param>
-			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
 			<param name="biomass" unit="g.g-1">-1.0</param>
 		</yield>
 	</reaction>
 	
 	<reaction catalyzedBy="spore" class="ReactionFactor" name="MySporeProduction2">
-		<param name="muMax" unit="hour-1">0.0417</param>
+		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">1.5e-3</param>
+			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="acid">
-			<param name="Ks" unit="g.L-1">0.5e-3</param>
+			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
 			<param name="spore" unit="g.g-1">1.0</param>
-			<param name="glucose" unit="g.g-1">-6.25</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
 			<param name="biomass" unit="g.g-1">-1.0</param>
 		</yield>
 	</reaction>
