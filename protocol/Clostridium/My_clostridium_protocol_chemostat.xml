@@ -35,10 +35,10 @@
 			simulation will end. -->
 		<timeStep>
 			<param name="adaptive">false</param>
-			<param name="timeStepIni" unit="hour">0.05</param>
+			<param name="timeStepIni" unit="hour">0.1</param>
 			<param name="timeStepMin" unit="hour">0.05</param>
 			<param name="timeStepMax" unit="hour">1.0</param>
-			<param name="endOfSimulation" unit="hour">0.5</param>
+			<param name="endOfSimulation" unit="hour">5.0</param>
 		</timeStep>
 
 		<!-- Attachment scenario - can be 'onetime', where the cells attach to the substratum initially (as in traditional iDynoMiCS)		
@@ -47,7 +47,7 @@
 		<param name="chemostat">true</param>
 		<!-- The 'agentTimeStep' parameter allows you to define a smaller timestep for agent
 			behaviors and interactions. And should always be EQUAL or LOWER than the global time step -->
-		<param name="agentTimeStep" unit="hour">0.05</param>
+		<param name="agentTimeStep" unit="hour">0.1</param>
 		<!-- Invasion/Competition simulation. Set to true if the simulation should stop once there is only one species left in the system -->
         <param name="invComp">false</param> 
 	</simulator>
@@ -91,7 +91,7 @@
 		<param name="diffusivity" unit="m2.day-1">2e-4</param>
 	</solute>
 	<solute domain="chemostat" name="aip">
-		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+		<param name="diffusivity" unit="m2.day-1">0.5e-4</param>
 	</solute>
 	<solute domain="chemostat" name="acid">
 		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
@@ -113,6 +113,12 @@
 		<param name="density" unit="g.L-1">5</param>
 	</particle>
 	<particle name="spore">
+		<param name="density" unit="g.L-1">5</param>
+	</particle>
+	<particle name="dummyExcrete">
+		<param name="density" unit="g.L-1">5</param>
+	</particle>
+	<particle name="dummyConsume">
 		<param name="density" unit="g.L-1">5</param>
 	</particle>
 	
@@ -158,12 +164,12 @@
 				<param name="Sin" unit="g.L-1">1e-6</param>
 			</solute>
 			<solute name="acid">
-				<param name="Sbulk" unit="g.L-1">0.0</param>
-				<param name="Sin" unit="g.L-1">0.0</param>
+				<param name="Sbulk" unit="g.L-1">1e-9</param>
+				<param name="Sin" unit="g.L-1">1e-9</param>
 			</solute>
 			<solute name="solvent">
-				<param name="Sbulk" unit="g.L-1">0.0</param>
-				<param name="Sin" unit="g.L-1">0.0</param>
+				<param name="Sbulk" unit="g.L-1">1e-9</param>
+				<param name="Sin" unit="g.L-1">1e-9</param>
 			</solute>
 		</bulk>
 
@@ -321,7 +327,7 @@
 		SOLVER SECTION
 	######################################################################-->
 
-	<solver class="Solver_chemostat" name="solutes" domain="chemostat">
+	<solver class="Solver_chemostat" name="solver1" domain="chemostat">
 		<param name="active">true</param>
 		<param name="atol">1e-3</param>
 		<param name="hmax">1e-3</param>
@@ -351,6 +357,7 @@
 	<speciesDefaults>
 		<param name="atol">1e-2</param>
 		<param name="hmax">1e-5</param>
+		<param name="initialProteinCV">0.25</param>
 	</speciesDefaults>
 	
 	
