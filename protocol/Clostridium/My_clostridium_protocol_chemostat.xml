@@ -116,14 +116,12 @@
 		<param name="density" unit="g.L-1">5</param>
 	</particle>
 	<particle name="dummyExcrete">
-		<param name="density" unit="g.L-1">5</param>
+		<param name="density" unit="g.L-1">5.0</param>
 	</particle>
 	<particle name="dummyConsume">
-		<param name="density" unit="g.L-1">5</param>
+		<param name="density" unit="g.L-1">5.0</param>
 	</particle>
 	
-
-
 
 	<!--#####################################################################
 		WORLD SECTION
