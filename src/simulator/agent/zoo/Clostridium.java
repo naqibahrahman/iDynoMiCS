@@ -39,52 +39,52 @@ public class Clostridium extends GeneRegBac
 		_proteinLevels = new Double[_numProtTypes];
 		
 		_proteinNames[0] = "SA";
-		_proteinLevels[0] = 17.5e-6;
+		_proteinLevels[0] = 10.0e-9;
 		
 		_proteinNames[1] = "SAP";
-		_proteinLevels[1] = 5.0e-6;
+		_proteinLevels[1] = 10.0e-9;
 		
 		_proteinNames[2] = "K";
-		_proteinLevels[2] = 0.01e-6;
+		_proteinLevels[2] = 10.0e-9;
 		
 		_proteinNames[3] = "KP";
-		_proteinLevels[3] = 0.04e-6;
+		_proteinLevels[3] = 10.0e-9;
 		
 		_proteinNames[4] = "Ph";
-		_proteinLevels[4] = 0.05e-6;
+		_proteinLevels[4] = 10.0e-9;
 		
 		_proteinNames[5] = "PhP";
-		_proteinLevels[5] = 0.125e-6;
+		_proteinLevels[5] = 10.0e-9;
 		
 		_proteinNames[6] = "Ab";
-		_proteinLevels[6] = 6.0e-9;
+		_proteinLevels[6] = 10.0e-9;
 		
 		_proteinNames[7] = "SigmaH";
-		_proteinLevels[7] = 0.1e-6;
+		_proteinLevels[7] = 10.0e-9;
 		
 		_proteinNames[8] = "A";
-		_proteinLevels[8] = 1.7e-6;
+		_proteinLevels[8] = 10.0e-9;
 		
 		_proteinNames[9] = "AP";
-		_proteinLevels[9] = 0.16e-6;
+		_proteinLevels[9] = 10.0e-9;
 		
 		_proteinNames[10] = "B";
-		_proteinLevels[10] = 0.04e-6;
+		_proteinLevels[10] = 10.0e-9;
 		
 		_proteinNames[11] = "C";
-		_proteinLevels[11] = 4.0e-9;
+		_proteinLevels[11] = 10.0e-9;
 		
 		_proteinNames[12] = "S";
-		_proteinLevels[12] = 0.01e-9;
+		_proteinLevels[12] = 10.0e-9;
 		
 		_proteinNames[13] = "T";
-		_proteinLevels[13] = 0.01e-9;
+		_proteinLevels[13] = 10.0e-9;
 		
 		_proteinNames[14] = "R";
-		_proteinLevels[14] = 2.0e-9;
+		_proteinLevels[14] = 10.0e-9;
 		
 		_proteinNames[15] = "RP";
-		_proteinLevels[15] = 1.85e-6;
+		_proteinLevels[15] = 10.0e-9;
 	}
 	
 	public Object clone() throws CloneNotSupportedException
@@ -173,7 +173,7 @@ public class Clostridium extends GeneRegBac
 													_species.domain.length_Z);
 			}
 			
-			if ( spRad >= this._myDivRadius * getSpeciesParam().spo0APsporeThresh ) 
+			if ( spRad >= this._myDivRadius * getSpeciesParam().sporeRadiusFrac ) 
 			{
 				// turn off all reactions
 		

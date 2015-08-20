@@ -134,13 +134,13 @@ public class ClostridiumParam extends GeneRegBacParam
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * sporulation.
 	 */
-	public Double spo0APsporeThresh = 10e-06; //M
+	public Double spo0APsporeThresh = 4e-08; //M
 	
 	/**
 	 * Threshold intracellular Spo0A~P concentration triggering
 	 * solventogenesis.
 	 */
-	public Double spo0APsolventThresh = 10e-06; //M
+	public Double spo0APsolventThresh = 4e-08; //M
 	
 	/**
 	 * Threshold the spore mass much reach before the cell has achieved spore
