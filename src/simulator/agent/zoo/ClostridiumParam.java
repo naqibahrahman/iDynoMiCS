@@ -23,6 +23,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	protected ArrayList<Integer> onSporulation;
 	protected ArrayList<Integer> offAllReactions;
 	protected ArrayList<Integer> onSolventogenesis;
+	protected ArrayList<Integer> offSolventogenesis;
 	
 	
 	/*
@@ -59,13 +60,15 @@ public class ClostridiumParam extends GeneRegBacParam
 	public Double B_SAP_Ab = 2e-08; //M
 	public Double B_Ab_sigmaH = 2e-08; //M
 	/*
-	 * Complex separation
+	 * Complex separation/formation
+	 * 
+	 * [Rob20Aug2015]: Since we need to reduce beta_RP for numerical reasons,
+	 * it makes sense to reduce gamma_RP also.
 	 */
-	public Double gamma_RP = 360.0;  // h-1
-	/*
-	 * Complex formation
-	 */
-	public Double beta_RP = 1.0e+9;  // M-1 h-1
+	//public Double gamma_RP = 360.0;  // h-1
+	public Double gamma_RP = 0.36;  // h-1
+	//public Double beta_RP = 3.0e+11;  // M-1 h-1
+	public Double beta_RP = 3.0e+08;  // M-1 h-1
 	/*
 	 * Degradation
 	 */
@@ -414,7 +417,7 @@ public class ClostridiumParam extends GeneRegBacParam
 		//////////////////////////////////////////////////////////////////////////
 		// create list of reactions during the On state (solventogenesis)
 		onSolventogenesis = new ArrayList<Integer>();
-		childParser = new XMLParser(switchParser.getChildElement("solventogenesis"));
+		childParser = new XMLParser(switchParser.getChildElement("solventogenesisOn"));
 		for (Element aReactionMarkUp : childParser.getChildrenElements("reaction"))
 		{
 		// Add the reaction to the list of reactions for the on-state
@@ -422,7 +425,15 @@ public class ClostridiumParam extends GeneRegBacParam
 			reacIndex = aSim.getReactionIndex(aReactionMarkUp.getAttributeValue("name"));
 			onSolventogenesis.add(reacIndex);
 		}
-	
+		offSolventogenesis = new ArrayList<Integer>();
+		childParser = new XMLParser(switchParser.getChildElement("solventogenesisOff"));
+		for (Element aReactionMarkUp : childParser.getChildrenElements("reaction"))
+		{
+		// Add the reaction to the list of reactions for the on-state
+			// but add only ACTIVE reactions!!
+			reacIndex = aSim.getReactionIndex(aReactionMarkUp.getAttributeValue("name"));
+			offSolventogenesis.add(reacIndex);
+		}
 		
 	}
 }

@@ -294,7 +294,27 @@
 		</yield>
 	</reaction>
 
-
+	
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyExcrete" class="ReactionFactor" name="aipExcrete">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="FirstOrderKinetic" solute="aip">
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">1.0</param>
+		</yield>
+	</reaction>
+	
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyConsume" class="ReactionFactor" name="aipConsume">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="LinearKinetic" solute="aip">
+			<param name="K" unit="h-1">1.0</param>
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
 
 
 	<!--#####################################################################
@@ -309,7 +329,8 @@
 		<reaction name="MySporeProduction1"/>
 		<reaction name="MyGlycolysis"/>
 		<reaction name="MySporeProduction2"/>
-
+		<reaction name="aipExcrete"/>
+		<reaction name="aipConsume"/>
 	</solver>
 
 
@@ -344,7 +365,12 @@
 		<particle name="spore">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
-
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
 		<param name="computationDomain">chemostat</param>
 		<param name="divRadius" unit="um">2.0</param>
 		<param name="divRadiusCV">0.1</param>
@@ -355,20 +381,23 @@
 		<param name="shoveFactor" unit="um">1.15</param>
 		<param name="shoveLimit" unit="um">0.0</param>
 		<param name="epsMax">0.1</param>
-		<reaction name="MyGlycolysis" status="active"/>
-		<reaction name="MySolventogenesis" status="active"/>
-		<reaction name="MySporeProduction1" status="active"/>
-		<reaction name="MySporeProduction2" status="active"/>
-		
+		<reaction name="MyGlycolysis"       status="active"/>
+		<reaction name="MySolventogenesis"  status="inactive"/>
+		<reaction name="MySporeProduction1" status="inactive"/>
+		<reaction name="MySporeProduction2" status="inactive"/>
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
 		<reactionSwitch>
 			<sporulating>
 				<reaction name="MySporeProduction1" status="active"/>
 				<reaction name="MySporeProduction2" status="active"/>
 			</sporulating>
-			<solventogenesis>
+			<solventogenesisOn>
 				<reaction name="MySolventogenesis" status="active"/>
-			</solventogenesis>
-			
+			</solventogenesisOn>
+			<solventogenesisOff>
+				<reaction name="MyGlycolysis" status="inactive"/>
+			</solventogenesisOff>
 		</reactionSwitch>
 
 		<initArea number="10">
@@ -385,6 +414,12 @@
 		<particle name="spore">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
 		<param name="computationDomain">chemostat</param>
 		<param name="divRadius" unit="um">3.0</param>
 		<param name="divRadiusCV">0.1</param>
@@ -399,21 +434,23 @@
 		<param name="epsMax">0.1</param>
 		<param name="kHyd" unit="hr-1">0.007</param>
 
-		<reaction name="MyGlycolysis" status="active"/>
-		<reaction name="MySolventogenesis" status="inactive"/>
+		<reaction name="MyGlycolysis"       status="active"/>
+		<reaction name="MySolventogenesis"  status="inactive"/>
 		<reaction name="MySporeProduction1" status="inactive"/>
 		<reaction name="MySporeProduction2" status="inactive"/>
-
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
 		<reactionSwitch>
 			<sporulating>
 				<reaction name="MySporeProduction1" status="active"/>
 				<reaction name="MySporeProduction2" status="active"/>
 			</sporulating>
-			<solventogenesis>
-				<reaction name="MySolventogenesis" status="active"/>
-			</solventogenesis>
-			
+			<solventogenesisOn>
+			</solventogenesisOn>
+			<solventogenesisOff>
+			</solventogenesisOff>
 		</reactionSwitch>
+
 
 		<initArea number="10">
 			<param name="birthday" unit="hour">0.0</param>

@@ -2,9 +2,9 @@ package simulator.agent.zoo;
 
 import Jama.Matrix;
 
-import idyno.SimTimer;
 import simulator.Simulator;
 import simulator.SoluteGrid;
+import simulator.SpatialGrid;
 import utils.ExtraMath;
 import utils.XMLParser;
 
@@ -12,15 +12,16 @@ public class Clostridium extends GeneRegBac
 {
 	private SoluteGrid _aipGrid;
 	private SoluteGrid _acidGrid;
-	private SoluteGrid _solventGrid;
 	
 	private Double _aipConc;
 	private Double _acidConc;
 	
-	private int _sporeIndex;
+	private int _sporeParticleIndex;
+	
+	private int _dummyExcreteIndex;
+	private int _dummyConsumeIndex;
 	
 	private String _sporeStatus = "noSpore";
-	
 	private String _metabolismStatus = "glycolysis";
 	
 	public Clostridium()
@@ -91,9 +92,10 @@ public class Clostridium extends GeneRegBac
 		Clostridium out = (Clostridium) super.clone();
 		out._aipGrid = this._aipGrid;
 		out._acidGrid = this._acidGrid;
-		out._solventGrid = this._solventGrid;
 		out._sporeStatus = this._sporeStatus;
-		
+		out._sporeParticleIndex = this._sporeParticleIndex;
+		out._dummyExcreteIndex = this._dummyExcreteIndex;
+		out._dummyConsumeIndex = this._dummyConsumeIndex;
 		return out;
 	}
 	
@@ -161,8 +163,8 @@ public class Clostridium extends GeneRegBac
 		 */
 		if ( this._sporeStatus.equals("sporulating") )
 		{
-			double spRad = this.particleMass[this._sporeIndex] /
-						getSpeciesParam().particleDensity[this._sporeIndex];
+			double spRad = this.particleMass[this._sporeParticleIndex] /
+						getSpeciesParam().particleDensity[this._sporeParticleIndex];
 			if ( Simulator.isChemostat || _species.domain.is3D )
 				spRad = ExtraMath.radiusOfASphere(spRad);
 			else
@@ -201,7 +203,6 @@ public class Clostridium extends GeneRegBac
 		//LogFile.chronoMessageOut("Gene regulation solved");
 		
 		checkSpo0A();
-		secretesAIP();
 		updateExternal();
 		/*
 		 * Compute mass growth over all compartments.
@@ -233,10 +234,7 @@ public class Clostridium extends GeneRegBac
 	{
 		super.initFromProtocolFile(aSim, aSpeciesRoot);
 		
-		this._aipGrid = aSim.getSolute("aip");
-		this._acidGrid = aSim.getSolute("acid");
-		this._solventGrid = aSim.getSolute("solvent");
-		this._sporeIndex = aSim.getParticleIndex("spore");
+		init(aSim);
 	}
 	
 	@Override
@@ -245,10 +243,7 @@ public class Clostridium extends GeneRegBac
 		/*
 		 * As from protocol file.
 		 */
-		this._aipGrid = aSim.getSolute("aip");
-		this._acidGrid = aSim.getSolute("acid");
-		this._solventGrid = aSim.getSolute("solvent");
-		
+		init(aSim);
 		/*
 		 * Set the spore status variable.
 		 */
@@ -262,6 +257,15 @@ public class Clostridium extends GeneRegBac
 		for ( int i = 0; i < iDataStart; i++ )
 			remainingSingleAgentData[i] = singleAgentData[i];
 		super.initFromResultFile(aSim, remainingSingleAgentData);
+	}
+	
+	private void init(Simulator aSim)
+	{
+		this._aipGrid = aSim.getSolute("aip");
+		this._acidGrid = aSim.getSolute("acid");
+		this._sporeParticleIndex = aSim.getParticleIndex("spore");
+		this._dummyExcreteIndex = aSim.getParticleIndex("dummyExcrete");
+		this._dummyConsumeIndex = aSim.getParticleIndex("dummyConsume");
 	}
 	
 	private void updateExternal()
@@ -791,30 +795,43 @@ public class Clostridium extends GeneRegBac
 		return dFdY;
 	}
 	
-	public void secretesAIP()
+	/**
+	 * \brief Add the reacting concentration of an agent to the received grid
+	 * 
+	 * Add the reacting concentration of an agent to the received grid
+	 * 
+	 * @param aSpG	Spatial grid used to sum catalysing mass
+	 * @param catalystIndex	Index of the compartment of the cell supporting the reaction
+	 */
+	@Override
+	public void fitMassOnGrid(SpatialGrid aSpG, int catalystIndex)
 	{
-		Double S = _proteinLevels[12];
-		Double T = _proteinLevels[13];
-		Double R = _proteinLevels[14];
-		Double RP = _proteinLevels[15];
-		Double AIPrate = 0.0;
-		AIPrate += getSpeciesParam().k_agr*T*S;
-		AIPrate -= getSpeciesParam().beta_RP*R*_aipConc;
-		AIPrate += getSpeciesParam().gamma_RP*RP;
+		if (isDead)
+			return;
 		
-	// dilution 
+		double value = particleMass[catalystIndex];
+		if ( catalystIndex == this._dummyExcreteIndex )
+		{
+			Double S = _proteinLevels[12];
+			Double T = _proteinLevels[13];
+			Double RP = _proteinLevels[15];
+			value = getSpeciesParam().k_agr*T*S;
+			value += getSpeciesParam().gamma_RP*RP;
+			value *= this.getVolume(false);
+		}
+		if ( catalystIndex == this._dummyConsumeIndex )
+		{
+			Double R = _proteinLevels[14];
+			value = getSpeciesParam().beta_RP*R;
+			value *= this.getVolume(false);
+		}
 		
-		AIPrate *= this._volume/_aipGrid.getVoxelVolume();
+		value /= aSpG.getVoxelVolume();
 		
-		AIPrate *= SimTimer.getCurrentTimeStep();
-		
-		AIPrate += _aipConc;
-		
-		Double rate = Math.max(AIPrate, 0.0);
-		
-		_aipGrid.setValueAt(rate, this._location);
+		if ( ! Double.isFinite(value) )
+			value = 0.0;
+		aSpG.addValueAt(value, _location);
 	}
-	
 	
 	public void checkSpo0A()
 	{
@@ -822,7 +839,7 @@ public class Clostridium extends GeneRegBac
 		if ( this._metabolismStatus == "glycolysis" )
 			if ( SAP > getSpeciesParam().spo0APsolventThresh )
 			{
-				for ( int aReac : getSpeciesParam().offAllReactions )
+				for ( int aReac : getSpeciesParam().offSolventogenesis )
 					switchOffreaction(allReactions[aReac]);
 				for ( int aReac : getSpeciesParam().onSolventogenesis )
 					switchOnReaction(allReactions[aReac]);

@@ -39,7 +39,7 @@ Note that in in this file, standard units are
 		<param name="diffusivity" unit="m2.day-1">2e-4</param>
 	</solute>
 	<solute domain="biofilm" name="aip">
-		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+		<param name="diffusivity" unit="m2.day-1">0.5e-4</param>
 	</solute>
 	<solute domain="biofilm" name="acid">
 		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
@@ -55,7 +55,13 @@ Note that in in this file, standard units are
 	<particle name="spore">
 		<param name="density" unit="g.L-1">5.0</param>
 	</particle>
-
+	<particle name="dummyExcrete">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	<particle name="dummyConsume">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	
 	<world>
 		<bulk name="bulk">
 			<param name="isConstant">true</param>
@@ -194,6 +200,27 @@ Note that in in this file, standard units are
 		</yield>
 	</reaction>
 
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyExcrete" class="ReactionFactor" name="aipExcrete">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="FirstOrderKinetic" solute="aip">
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">1.0</param>
+		</yield>
+	</reaction>
+	
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyConsume" class="ReactionFactor" name="aipConsume">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="LinearKinetic" solute="aip">
+			<param name="K" unit="h-1">1.0</param>
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
 	<solver class="Solver_multigrid" name="solutes" domain="biofilm">
 		<param name="active">true</param>
 		<param name="preStep">150</param>
@@ -204,6 +231,8 @@ Note that in in this file, standard units are
 		<reaction name="MySporeProduction1"/>
 		<reaction name="MyGlycolysis"/>
 		<reaction name="MySporeProduction2"/>
+		<reaction name="aipExcrete"/>
+		<reaction name="aipConsume"/>
 	</solver>
 
 	<agentGrid>
@@ -234,6 +263,12 @@ Note that in in this file, standard units are
 		<particle name="spore">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
 		<param name="computationDomain">biofilm</param>
 		<param name="distMethod">true</param>
 		<param name="divRadius" unit="um">2.0</param>
@@ -248,14 +283,19 @@ Note that in in this file, standard units are
 		<reaction name="MySolventogenesis"  status="inactive"/>
 		<reaction name="MySporeProduction1" status="inactive"/>
 		<reaction name="MySporeProduction2" status="inactive"/>
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
 		<reactionSwitch>
 			<sporulating>
 				<reaction name="MySporeProduction1" status="active"/>
 				<reaction name="MySporeProduction2" status="active"/>
 			</sporulating>
-			<solventogenesis>
+			<solventogenesisOn>
 				<reaction name="MySolventogenesis" status="active"/>
-			</solventogenesis>
+			</solventogenesisOn>
+			<solventogenesisOff>
+				<reaction name="MyGlycolysis" status="inactive"/>
+			</solventogenesisOff>
 		</reactionSwitch>
 
 		<initArea number="10">
@@ -270,6 +310,12 @@ Note that in in this file, standard units are
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
 		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
 		<param name="computationDomain">biofilm</param>
@@ -289,14 +335,17 @@ Note that in in this file, standard units are
 		<reaction name="MySolventogenesis"  status="inactive"/>
 		<reaction name="MySporeProduction1" status="inactive"/>
 		<reaction name="MySporeProduction2" status="inactive"/>
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
 		<reactionSwitch>
 			<sporulating>
 				<reaction name="MySporeProduction1" status="active"/>
 				<reaction name="MySporeProduction2" status="active"/>
 			</sporulating>
-			<solventogenesis>
-				<reaction name="MyGlycolysis" status="active"/>
-			</solventogenesis>
+			<solventogenesisOn>
+			</solventogenesisOn>
+			<solventogenesisOff>
+			</solventogenesisOff>
 		</reactionSwitch>
 
 		<initArea number="10">
