@@ -5,7 +5,7 @@ from __future__ import with_statement
 # Standard ki, in Molar
 standard_ki = 0.1
 # Fraction change for the mutant
-mutant_change = 0.5
+mutant_change = 0.1
 
 change_dict = {
 
