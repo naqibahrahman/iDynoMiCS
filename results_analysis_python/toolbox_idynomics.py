@@ -121,6 +121,12 @@ class SimulationDirectory:
         """
         return self.get_iterate_information()[0].env_output.get_solute_names()
 
+    def get_initial_species_outputs(self):
+        """
+
+        """
+        return self.get_single_iterate(0).agent_output.species_outputs
+
     def get_species_names(self):
         """
 
@@ -313,7 +319,7 @@ def get_default_species_colors(sim):
     out = {}
     nonplasmids = []
     plasmids = []
-    for species_name in sim.get_species_names():
+    for species_name in sim.get_initial_species_outputs():
         if 'plasmid' in species_name.lower():
             plasmids.append(species_name)
             continue

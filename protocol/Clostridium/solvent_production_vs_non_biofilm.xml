@@ -13,7 +13,7 @@ Note that in in this file, standard units are
         <param name="quietMode">false</param>
 		<param name="restartPreviousRun">false</param>
 		<param name="randomSeed">42</param>
-		<param name="outputPeriod" unit="hour">0.1</param>
+		<param name="outputPeriod" unit="hour">1.0</param>
 		<param name="checkForReleaseUpdate">true</param>
 		<timeStep>
 			<param name="adaptive">false</param>
@@ -42,10 +42,10 @@ Note that in in this file, standard units are
 		<param name="diffusivity" unit="m2.day-1">0.5e-4</param>
 	</solute>
 	<solute domain="biofilm" name="acid">
-		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+		<param name="diffusivity" unit="m2.day-1">1.0e-4</param>
 	</solute>
 	<solute domain="biofilm" name="solvent">
-		<param name="diffusivity" unit="m2.day-1">1e-4</param>
+		<param name="diffusivity" unit="m2.day-1">1.0e-4</param>
 	</solute>
 	
 	<!-- Density of 150 g/L = 5 M, assuming 30g/mole -->
@@ -71,16 +71,16 @@ Note that in in this file, standard units are
 				<param name="Sin" unit="g.L-1">10e-5</param>
 			</solute>
 			<solute name="aip">
-				<param name="Sbulk" unit="g.L-1">1e-9</param>
-				<param name="Sin" unit="g.L-1">1e-9</param>
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
 			</solute>
 			<solute name="acid">
-				<param name="Sbulk" unit="g.L-1">1e-9</param>
-				<param name="Sin" unit="g.L-1">1e-9</param>
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
 			</solute>
 			<solute name="solvent">
-				<param name="Sbulk" unit="g.L-1">1e-9</param>
-				<param name="Sin" unit="g.L-1">1e-9</param>
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
 			</solute>
 		</bulk>
 		<computationDomain name="biofilm">
@@ -172,7 +172,7 @@ Note that in in this file, standard units are
 		<kineticFactor class="SimpleInhibition" solute="solvent">
 			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
-		<kineticFactor class="MonodKinetic" solute="acid">
+		<kineticFactor class="MonodKinetic" solute="glucose">
 			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
@@ -190,7 +190,7 @@ Note that in in this file, standard units are
 		<kineticFactor class="SimpleInhibition" solute="solvent">
 			<param name="Ki" unit="g.L-1">0.13</param>
 		</kineticFactor>
-		<kineticFactor class="MonodKinetic" solute="acid">
+		<kineticFactor class="MonodKinetic" solute="glucose">
 			<param name="Ks" unit="g.L-1">1e-6</param>
 		</kineticFactor>
 		<yield>
@@ -239,7 +239,7 @@ Note that in in this file, standard units are
 		<param name="computationDomain">biofilm</param>
 		<param name="resolution" unit="um">4.0</param>
 		<detachment class="DS_Quadratic">
-			<param name="kDet" unit="um-1.hour-1">1e-4</param>
+			<param name="kDet" unit="um-1.hour-1">2e-4</param>
 			<param name="maxTh" unit="um">100.0</param>
 		</detachment>
 		<param name="erosionMethod">false</param>

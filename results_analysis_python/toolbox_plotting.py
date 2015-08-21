@@ -264,6 +264,32 @@ class SlideFigure(JournalFigure):
                 line.set_markeredgewidth(1)
 
 
+class IpadMiniLandscapeFigure(JournalFigure):
+    def __init__(self, portrait=True):
+        JournalFigure.__init__(self)
+        self.height = mm2inch(120)
+        self.width = mm2inch(160)
+        if ( portrait ):
+             self.height, self.width = self.width, self.height
+        matplotlib.rc('font',**{'family':'sans serif',
+                                'weight':'normal',
+                                'size':10})
+        matplotlib.rc('mathtext', fontset='stixsans', default='regular')
+        matplotlib.rcParams['xtick.direction'] = 'out'
+        matplotlib.rcParams['ytick.direction'] = 'out'
+        self.fig = matplotlib.pyplot.figure(figsize=(self.width, self.height))
+    def process_subplots(self, padding=0.02):
+        self.inset_axes(padding=padding)
+        for axis, label in self.subplots.iteritems():
+            axis.text(-0.25, 1.02, label, transform=axis.transAxes,
+                                    va='top', fontsize=12, fontweight='bold')
+            for line in axis.spines.itervalues():
+                line.set_linewidth(1)
+            axis.tick_params(bottom='on', top='off', left='on', right='off')
+            for line in axis.get_xticklines() + axis.get_yticklines():
+                line.set_markeredgewidth(1)
+
+
 class PovrayFile:
     def __init__(self, agent_output, save_path):
         self.agent_output = agent_output
