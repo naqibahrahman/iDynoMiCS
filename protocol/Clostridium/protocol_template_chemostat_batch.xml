@@ -382,7 +382,7 @@
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
 		<param name="computationDomain">chemostat</param>
-		<param name="divRadius" unit="um">3.0</param>
+		<param name="divRadius" unit="um">2.0</param>
 		<param name="divRadiusCV">0.1</param>
 		<param name="deathRadius" unit="um">0.1</param>
 		<param name="deathRadiusCV">0.1</param>

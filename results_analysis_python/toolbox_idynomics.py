@@ -319,7 +319,7 @@ def get_default_species_colors(sim):
     out = {}
     nonplasmids = []
     plasmids = []
-    for species_name in sim.get_initial_species_outputs():
+    for species_name in sim.get_species_names():
         if 'plasmid' in species_name.lower():
             plasmids.append(species_name)
             continue
