@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NOTE: g.L-1 is Molar, fg is fmole-->
+<idynomics>
+
+	<!--#####################################################################
+		SIMULATOR SECTION
+	######################################################################-->
+	<simulator>
+        <param name="quietMode">false</param>
+        <param name="restartPreviousRun">false</param>
+        <param name="randomSeed">42</param>
+        <param name="outputPeriod" unit="hour">1.0</param>
+        <param name="checkForReleaseUpdate">true</param>
+        <timeStep>
+            <param name="adaptive">false</param>
+            <param name="timeStepIni" unit="hour">0.1</param>
+            <param name="timeStepMin" unit="hour">0.05</param>
+            <param name="timeStepMax" unit="hour">1.0</param>
+            <param name="endOfSimulation" unit="day">7.0</param>
+        </timeStep>
+        <param name="attachment">onetime</param>
+        <param name="chemostat">true</param>
+        <param name="agentTimeStep" unit="hour">0.1</param>
+        <param name="invComp">false</param> 
+	</simulator>
+
+	<!--#####################################################################
+		INPUT SECTION
+	######################################################################-->
+	<input>
+		<param name="useAgentFile">false</param>
+		<param name="inputAgentFileURL">agent_State(last).xml</param>
+		<param name="useBulkFile">false</param>
+		<param name="inputBulkFileURL">env_Sum(last).xml</param>
+	</input>
+
+	<!--#####################################################################
+		SOLUTES AND BIOMASS TYPES SECTION
+	######################################################################-->
+	<solute domain="chemostat" name="glucose">
+		<param name="diffusivity" unit="m2.day-1">2e-4</param>
+	</solute>
+	<solute domain="chemostat" name="aip">
+		<param name="diffusivity" unit="m2.day-1">0.5e-4</param>
+	</solute>
+	<solute domain="chemostat" name="acid">
+		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
+	</solute>
+	<solute domain="chemostat" name="solvent">
+		<param name="diffusivity" unit="m2.day-1">1e-4</param>
+	</solute>
+
+	<particle name="biomass">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	<particle name="spore">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	<particle name="dummyExcrete">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	<particle name="dummyConsume">
+		<param name="density" unit="g.L-1">5.0</param>
+	</particle>
+	
+
+	<!--#####################################################################
+		WORLD SECTION
+	######################################################################-->
+
+	<world>
+		<bulk name="chemostat">
+			<param name="isConstant">false</param>
+			<param name="D" unit="h-1">0.0</param>
+			<solute name="glucose">
+				<param name="Sbulk" unit="g.L-1">0.1</param>
+				<param name="Sin" unit="g.L-1">0.1</param>
+			</solute>
+			<solute name="aip">
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
+			</solute>
+			<solute name="acid">
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
+			</solute>
+			<solute name="solvent">
+				<param name="Sbulk" unit="g.L-1">1e-12</param>
+				<param name="Sin" unit="g.L-1">1e-12</param>
+			</solute>
+		</bulk>
+		<computationDomain name="chemostat">
+              <grid nDim="1" nI="1" nJ="1" nK="1"/>
+                  <param name="resolution" unit="um">2e3</param>
+                  <boundaryCondition class="BoundaryZeroFlux" name="y0z">
+                      <shape class="Planar">
+                          <param name="pointIn" i="-1" j="0" k="0"/>
+                          <param name="vectorOut" i="-1" j="0" k="0"/>
+                      </shape>
+                  </boundaryCondition>
+			   <boundaryCondition class="BoundaryBulk" name="yNz">
+                      <param name="activeForSolute">yes</param>
+                      <param name="bulk">chemostat</param>
+				  <shape class="Planar">
+                          <param name="pointIn" i="1" j="0" k="0"/>
+                          <param name="vectorOut" i="1" j="0" k="0"/>
+				</shape>
+			</boundaryCondition>
+			<boundaryCondition class="BoundaryCyclic" name="x0z">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="-1" k="0"/>
+					<param name="vectorOut" i="0" j="-1" k="0"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="1" k="0"/>
+					<param name="vectorOut" i="0" j="1" k="0"/>
+				</shape>
+			</boundaryCondition>
+			<boundaryCondition class="BoundaryCyclic" name="x0y">
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="-1"/>
+					<param name="vectorOut" i="0" j="0" k="-1"/>
+				</shape>
+				<shape class="Planar">
+					<param name="pointIn" i="0" j="0" k="1"/>
+					<param name="vectorOut" i="0" j="0" k="1"/>
+				</shape>
+			</boundaryCondition>
+		</computationDomain>
+	</world>
+
+
+	<!--#####################################################################
+		REACTION SECTION
+	######################################################################-->
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="WildtypeGlycolysis">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="acid" unit="g.g-1">0.625</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">1.0</param>
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MutantGlycolysis">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.15</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.05</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="acid" unit="g.g-1">0.625</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">1.0</param>
+	
+		</yield>
+	</reaction>
+
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="WildtypeSolventogenesis">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="acid">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="solvent" unit="g.g-1">1.5</param>
+			<param name="acid" unit="g.g-1">-0.375</param>
+			<param name="biomass" unit="g.g-1">0.5</param>
+			
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="WildtypeSporeProduction1">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.10</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MutantSporeProduction1">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.15</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.05</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
+
+	<reaction catalyzedBy="spore" class="ReactionFactor" name="WildtypeSporeProduction2">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.1</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.1</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
+	<reaction catalyzedBy="spore" class="ReactionFactor" name="MutantSporeProduction2">
+		<param name="muMax" unit="hour-1">0.6</param>
+		<kineticFactor class="SimpleInhibition" solute="acid">
+			<param name="Ki" unit="g.L-1">0.15</param>
+		</kineticFactor>
+		<kineticFactor class="SimpleInhibition" solute="solvent">
+			<param name="Ki" unit="g.L-1">0.05</param>
+		</kineticFactor>
+		<kineticFactor class="MonodKinetic" solute="glucose">
+			<param name="Ks" unit="g.L-1">10e-6</param>
+		</kineticFactor>
+		<yield>
+			<param name="spore" unit="g.g-1">1.0</param>
+			<param name="glucose" unit="g.g-1">-0.75</param>
+			<param name="biomass" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+	
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyExcrete" class="ReactionFactor" name="aipExcrete">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="FirstOrderKinetic" solute="aip">
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">1.0</param>
+		</yield>
+	</reaction>
+	
+	<!-- This is a dummy reaction -->
+	<reaction catalyzedBy="dummyConsume" class="ReactionFactor" name="aipConsume">
+		<param name="muMax" unit="hour-1">1.0</param>
+		<kineticFactor class="LinearKinetic" solute="aip">
+			<param name="K" unit="h-1">1.0</param>
+		</kineticFactor>
+		<yield>
+			<param name="aip" unit="g.g-1">-1.0</param>
+		</yield>
+	</reaction>
+
+
+	<!--#####################################################################
+		SOLVER SECTION
+	######################################################################-->
+	<solver class="Solver_chemostat" name="solver1" domain="chemostat">
+		<param name="active">true</param>
+		<param name="atol">1e-3</param>
+		<param name="hmax">1e-3</param>
+          <reaction name="WildtypeGlycolysis"/>
+		<reaction name="MutantGlycolysis"/>
+          <reaction name="WildtypeSolventogenesis"/>
+		<reaction name="WildtypeSporeProduction1"/>
+		<reaction name="MutantSporeProduction1"/>
+		<reaction name="WildtypeSporeProduction2"/>
+		<reaction name="MutantSporeProduction2"/>
+		<reaction name="aipExcrete"/>
+		<reaction name="aipConsume"/>
+	</solver>
+
+	<!--#####################################################################
+		AGENT GRID SECTION
+	######################################################################-->
+	<agentGrid>
+		<param name="computationDomain">chemostat</param>
+	</agentGrid>
+	
+	<!--#####################################################################
+		SPECIES SECTION
+	######################################################################-->
+
+     <speciesDefaults>
+		<param name="atol">1e-2</param>
+		<param name="hmax">1e-5</param>
+		<param name="initialProteinCV">0.25</param>
+	</speciesDefaults>  
+  
+	<!--Type of species: Wildtype represents Clostridium that produce
+         solvents, Mutant does not have the ability to do so -->
+	<species class="Clostridium" name="Wildtype">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<param name="computationDomain">chemostat</param>
+		<param name="divRadius" unit="um">2.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.2</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<reaction name="WildtypeGlycolysis"       status="active"/>
+		<reaction name="WildtypeSolventogenesis"  status="inactive"/>
+		<reaction name="WildtypeSporeProduction1" status="inactive"/>
+		<reaction name="WildtypeSporeProduction2" status="inactive"/>
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="WildtypeSporeProduction1" status="active"/>
+				<reaction name="WildtypeSporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesisOn>
+				<reaction name="WildtypeSolventogenesis" status="active"/>
+			</solventogenesisOn>
+			<solventogenesisOff>
+				<reaction name="WildtypeGlycolysis" status="inactive"/>
+			</solventogenesisOff>
+		</reactionSwitch>
+		<initArea number="10">
+			<param name="birthday" unit="hour">0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="264.0" z="0.0"/>
+		</initArea>
+	</species>
+
+	<species class="Clostridium" name="Mutant">
+		<particle name="biomass">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="spore">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyExcrete">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<particle name="dummyConsume">
+			<param name="mass" unit="fg">0.0</param>
+		</particle>
+		<param name="computationDomain">chemostat</param>
+		<param name="divRadius" unit="um">2.0</param>
+		<param name="divRadiusCV">0.1</param>
+		<param name="deathRadius" unit="um">0.1</param>
+		<param name="deathRadiusCV">0.1</param>
+		<param name="babyMassFrac">0.5</param>
+		<param name="babyMassFracCV">0.05</param>
+		<!-- Non-solventogenic species, so threshold unrealistically high -->
+		<param name="spo0APsolventThresh">1E100</param>
+		<reaction name="MutantGlycolysis"       status="active"/>
+		<reaction name="MutantSporeProduction1" status="inactive"/>
+		<reaction name="MutantSporeProduction2" status="inactive"/>
+		<reaction name="aipExcrete" status="active"/>
+		<reaction name="aipConsume" status="active"/>
+		<reactionSwitch>
+			<sporulating>
+				<reaction name="MutantSporeProduction1" status="active"/>
+				<reaction name="MutantSporeProduction2" status="active"/>
+			</sporulating>
+			<solventogenesisOn>
+			</solventogenesisOn>
+			<solventogenesisOff>
+			</solventogenesisOff>
+		</reactionSwitch>
+		<initArea number="10">
+			<param name="birthday" unit="hour">0.0</param>
+			<coordinates x="0.0" y="0.0" z="0.0"/>
+			<coordinates x="1.0" y="264.0" z="0.0"/>
+		</initArea>
+	</species>
+</idynomics>
