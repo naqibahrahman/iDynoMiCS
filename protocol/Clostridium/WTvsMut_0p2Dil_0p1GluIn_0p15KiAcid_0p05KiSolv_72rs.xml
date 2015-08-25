@@ -8,7 +8,7 @@
 	<simulator>
         <param name="quietMode">false</param>
         <param name="restartPreviousRun">false</param>
-        <param name="randomSeed">42</param>
+        <param name="randomSeed">72</param>
         <param name="outputPeriod" unit="hour">1.0</param>
         <param name="checkForReleaseUpdate">true</param>
         <timeStep>
@@ -16,7 +16,7 @@
             <param name="timeStepIni" unit="hour">0.1</param>
             <param name="timeStepMin" unit="hour">0.05</param>
             <param name="timeStepMax" unit="hour">1.0</param>
-            <param name="endOfSimulation" unit="day">3.0</param>
+            <param name="endOfSimulation" unit="day">7.0</param>
         </timeStep>
         <param name="attachment">onetime</param>
         <param name="chemostat">true</param>
@@ -155,10 +155,10 @@
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MutantGlycolysis">
 		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">0.11</param>
+			<param name="Ki" unit="g.L-1">0.15</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">0.09</param>
+			<param name="Ki" unit="g.L-1">0.05</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="glucose">
 			<param name="Ks" unit="g.L-1">10e-6</param>
@@ -212,10 +212,10 @@
 	<reaction catalyzedBy="biomass" class="ReactionFactor" name="MutantSporeProduction1">
 		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">0.11</param>
+			<param name="Ki" unit="g.L-1">0.15</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">0.09</param>
+			<param name="Ki" unit="g.L-1">0.05</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="glucose">
 			<param name="Ks" unit="g.L-1">10e-6</param>
@@ -249,10 +249,10 @@
 	<reaction catalyzedBy="spore" class="ReactionFactor" name="MutantSporeProduction2">
 		<param name="muMax" unit="hour-1">0.6</param>
 		<kineticFactor class="SimpleInhibition" solute="acid">
-			<param name="Ki" unit="g.L-1">0.11</param>
+			<param name="Ki" unit="g.L-1">0.15</param>
 		</kineticFactor>
 		<kineticFactor class="SimpleInhibition" solute="solvent">
-			<param name="Ki" unit="g.L-1">0.09</param>
+			<param name="Ki" unit="g.L-1">0.05</param>
 		</kineticFactor>
 		<kineticFactor class="MonodKinetic" solute="glucose">
 			<param name="Ks" unit="g.L-1">10e-6</param>

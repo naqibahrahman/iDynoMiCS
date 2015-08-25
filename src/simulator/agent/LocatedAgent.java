@@ -952,22 +952,14 @@ public abstract class LocatedAgent extends ActiveAgent implements Cloneable
 	}
 
 	/**
-	 * \brief Compute the radius on the basis of the volume The radius evolution is stored in deltaRadius (used for shrinking)
+	 * \brief Compute the radius on the basis of the volume.
 	 * 
-	 * Compute the radius on the basis of the volume The radius evolution is stored in deltaRadius (used for shrinking)
+	 * The radius evolution is stored in deltaRadius (used for shrinking).
 	 */
-	public void updateRadius() {
-
-		//sonia:chemostat 22.02.2010
-		if(Simulator.isChemostat || _species.domain.is3D){
-			_radius = ExtraMath.radiusOfASphere(_volume);
-			_totalRadius = ExtraMath.radiusOfASphere(_totalVolume);
-		}else{
-			_radius = ExtraMath.radiusOfACylinder(_volume,
-					_species.domain.length_Z);
-			_totalRadius = ExtraMath.radiusOfACylinder(_totalVolume,
-					_species.domain.length_Z);
-		}
+	public void updateRadius()
+	{
+		this._radius = _species.domain.agentRadius(this._volume);
+		this._totalRadius = _species.domain.agentRadius(this._totalVolume);
 	}
 
 	/**

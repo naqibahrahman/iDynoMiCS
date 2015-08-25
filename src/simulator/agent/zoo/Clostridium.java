@@ -24,6 +24,8 @@ public class Clostridium extends GeneRegBac
 	private String _sporeStatus = "noSpore";
 	private String _metabolismStatus = "glycolysis";
 	
+	private Double _sporeThresholdMass;
+	
 	public Clostridium()
 	{
 		super();
@@ -163,25 +165,14 @@ public class Clostridium extends GeneRegBac
 		 */
 		if ( this._sporeStatus.equals("sporulating") )
 		{
-			double spRad = this.particleMass[this._sporeParticleIndex] /
-						getSpeciesParam().particleDensity[this._sporeParticleIndex];
-			if ( Simulator.isChemostat || _species.domain.is3D )
-				spRad = ExtraMath.radiusOfASphere(spRad);
-			else
+			if ( this.particleMass[this._sporeParticleIndex] >= 
+													this._sporeThresholdMass ) 
 			{
-				spRad = ExtraMath.radiusOfACylinder(spRad,
-													_species.domain.length_Z);
-			}
-			
-			if ( spRad >= this._myDivRadius * getSpeciesParam().sporeRadiusFrac ) 
-			{
-				// turn off all reactions
-		
+				/*
+				 * Turn off all reactions, set the spore status and exit.
+				 */
 				for ( int aReac : getSpeciesParam().offAllReactions )
 					switchOffreaction(allReactions[aReac]);
-				/*
-				 * 
-				 */
 				this._sporeStatus = "spore";
 				return;
 			}
@@ -855,10 +846,17 @@ public class Clostridium extends GeneRegBac
 				for ( int aReac : getSpeciesParam().onSporulation )
 					switchOnReaction(allReactions[aReac]);
 				this._sporeStatus = "sporulating";
+				/*
+				 * Calculate the threshold mass of spore material that the
+				 * cell must reach.
+				 */
+				this._sporeThresholdMass = getSpeciesParam().particleDensity[
+				                                     this._sporeParticleIndex]
+						 * _species.domain.agentVolume(this._myDivRadius) *
+						 getSpeciesParam().sporeMassFrac;
 			}
 	}
-
-
+	
 	public ClostridiumParam getSpeciesParam()
 	{
 		return (ClostridiumParam) _speciesParam;

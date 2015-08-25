@@ -147,7 +147,7 @@ public class ClostridiumParam extends GeneRegBacParam
 	 * status. This is the ratio of the spore radius to the cell's division
 	 * radius.
 	 */
-	public Double sporeRadiusFrac = 0.5; 
+	public Double sporeMassFrac = 0.5; 
 	
 	/**
 	 * Probability that a newly-created daughter cell will sporulate if the 
@@ -379,8 +379,8 @@ public class ClostridiumParam extends GeneRegBacParam
 		value = getSpeciesParameterDouble("spo0APsolventThresh", aSpeciesRoot, speciesDefaults);
 		spo0APsolventThresh = Double.isNaN(value) ? spo0APsolventThresh : value;
 		
-		value = getSpeciesParameterDouble("sporeRadiusFrac", aSpeciesRoot, speciesDefaults);
-		sporeRadiusFrac = Double.isNaN(value) ? sporeRadiusFrac : value;
+		value = getSpeciesParameterDouble("sporeMassFrac", aSpeciesRoot, speciesDefaults);
+		sporeMassFrac = Double.isNaN(value) ? sporeMassFrac : value;
 		
 		//Probability
 		value = getSpeciesParameterDouble("sporeProb", aSpeciesRoot, speciesDefaults);

@@ -8,7 +8,7 @@
 	<simulator>
         <param name="quietMode">false</param>
         <param name="restartPreviousRun">false</param>
-        <param name="randomSeed">42</param>
+        <param name="randomSeed">365</param>
         <param name="outputPeriod" unit="hour">1.0</param>
         <param name="checkForReleaseUpdate">true</param>
         <timeStep>

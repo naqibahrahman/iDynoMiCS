@@ -16,10 +16,10 @@
             <param name="timeStepIni" unit="hour">0.1</param>
             <param name="timeStepMin" unit="hour">0.05</param>
             <param name="timeStepMax" unit="hour">1.0</param>
-            <param name="endOfSimulation" unit="day">3.0</param>
+            <param name="endOfSimulation" unit="day">7.0</param>
         </timeStep>
         <param name="attachment">onetime</param>
-        <param name="chemostat">true</param>
+        <param name="chemostat">false</param>
         <param name="agentTimeStep" unit="hour">0.1</param>
         <param name="invComp">false</param> 
 	</simulator>
@@ -37,16 +37,16 @@
 	<!--#####################################################################
 		SOLUTES AND BIOMASS TYPES SECTION
 	######################################################################-->
-	<solute domain="chemostat" name="glucose">
+	<solute domain="biofilm" name="glucose">
 		<param name="diffusivity" unit="m2.day-1">2e-4</param>
 	</solute>
-	<solute domain="chemostat" name="aip">
+	<solute domain="biofilm" name="aip">
 		<param name="diffusivity" unit="m2.day-1">0.5e-4</param>
 	</solute>
-	<solute domain="chemostat" name="acid">
+	<solute domain="biofilm" name="acid">
 		<param name="diffusivity" unit="m2.day-1">1.7e-4</param>
 	</solute>
-	<solute domain="chemostat" name="solvent">
+	<solute domain="biofilm" name="solvent">
 		<param name="diffusivity" unit="m2.day-1">1e-4</param>
 	</solute>
 
@@ -69,9 +69,9 @@
 	######################################################################-->
 
 	<world>
-		<bulk name="chemostat">
-			<param name="isConstant">false</param>
-			<param name="D" unit="h-1">0.2</param>
+		<bulk name="bulk">
+			<param name="isConstant">true</param>
+			<param name="D" unit="h-1">0.0</param>
 			<solute name="glucose">
 				<param name="Sbulk" unit="g.L-1">0.1</param>
 				<param name="Sin" unit="g.L-1">0.1</param>
@@ -89,21 +89,24 @@
 				<param name="Sin" unit="g.L-1">1e-12</param>
 			</solute>
 		</bulk>
-		<computationDomain name="chemostat">
-              <grid nDim="1" nI="1" nJ="1" nK="1"/>
-                  <param name="resolution" unit="um">2e3</param>
-                  <boundaryCondition class="BoundaryZeroFlux" name="y0z">
-                      <shape class="Planar">
-                          <param name="pointIn" i="-1" j="0" k="0"/>
-                          <param name="vectorOut" i="-1" j="0" k="0"/>
-                      </shape>
-                  </boundaryCondition>
-			   <boundaryCondition class="BoundaryBulk" name="yNz">
-                      <param name="activeForSolute">yes</param>
-                      <param name="bulk">chemostat</param>
-				  <shape class="Planar">
-                          <param name="pointIn" i="1" j="0" k="0"/>
-                          <param name="vectorOut" i="1" j="0" k="0"/>
+		<computationDomain name="biofilm">
+            <grid nDim="2" nI="33" nJ="33" nK="1"/>
+			<param name="resolution" unit="um">4.0</param>
+			<param name="boundaryLayer" unit="um">32.0</param>
+			<param name="biofilmDiffusivity">0.8</param>
+			<param name="specificArea" unit="m2.m-3">80</param>
+            <boundaryCondition class="BoundaryZeroFlux" name="y0z">
+                <shape class="Planar">
+                    <param name="pointIn" i="-1" j="0" k="0"/>
+                    <param name="vectorOut" i="-1" j="0" k="0"/>
+                </shape>
+            </boundaryCondition>
+			<boundaryCondition class="BoundaryBulk" name="yNz">
+                <param name="activeForSolute">yes</param>
+                <param name="bulk">bulk</param>
+			    <shape class="Planar">
+                    <param name="pointIn" i="33" j="0" k="0"/>
+                    <param name="vectorOut" i="1" j="0" k="0"/>
 				</shape>
 			</boundaryCondition>
 			<boundaryCondition class="BoundaryCyclic" name="x0z">
@@ -112,7 +115,7 @@
 					<param name="vectorOut" i="0" j="-1" k="0"/>
 				</shape>
 				<shape class="Planar">
-					<param name="pointIn" i="0" j="1" k="0"/>
+					<param name="pointIn" i="0" j="33" k="0"/>
 					<param name="vectorOut" i="0" j="1" k="0"/>
 				</shape>
 			</boundaryCondition>
@@ -289,13 +292,15 @@
 	<!--#####################################################################
 		SOLVER SECTION
 	######################################################################-->
-	<solver class="Solver_chemostat" name="solver1" domain="chemostat">
+	<solver class="Solver_multigrid" name="solutes" domain="biofilm">
 		<param name="active">true</param>
-		<param name="atol">1e-3</param>
-		<param name="hmax">1e-3</param>
-          <reaction name="WildtypeGlycolysis"/>
+		<param name="preStep">150</param>
+		<param name="postStep">150</param>
+		<param name="coarseStep">1500</param>
+		<param name="nCycles">5</param>
+        <reaction name="WildtypeGlycolysis"/>
 		<reaction name="MutantGlycolysis"/>
-          <reaction name="WildtypeSolventogenesis"/>
+        <reaction name="WildtypeSolventogenesis"/>
 		<reaction name="WildtypeSporeProduction1"/>
 		<reaction name="MutantSporeProduction1"/>
 		<reaction name="WildtypeSporeProduction2"/>
@@ -308,7 +313,18 @@
 		AGENT GRID SECTION
 	######################################################################-->
 	<agentGrid>
-		<param name="computationDomain">chemostat</param>
+		<param name="computationDomain">biofilm</param>
+		<param name="resolution" unit="um">4.0</param>
+		<detachment class="DS_Quadratic">
+			<param name="kDet" unit="um-1.hour-1">2e-4</param>
+			<param name="maxTh" unit="um">100.0</param>
+		</detachment>
+		<param name="erosionMethod">false</param>
+		<param name="sloughDetachedBiomass">true</param>
+		<param name="shovingMaxNodes">2e6</param>
+		<param name="shovingFraction">0.025</param>
+		<param name="shovingMaxIter">250</param>
+		<param name="shovingMutual">true</param>
 	</agentGrid>
 	
 	<!--#####################################################################
@@ -316,8 +332,8 @@
 	######################################################################-->
 
      <speciesDefaults>
-		<param name="atol">1e-2</param>
-		<param name="hmax">1e-5</param>
+		<param name="atol">1e-9</param>
+		<param name="hmax">1e-4</param>
 		<param name="initialProteinCV">0.25</param>
 	</speciesDefaults>  
   
@@ -336,7 +352,8 @@
 		<particle name="dummyConsume">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
-		<param name="computationDomain">chemostat</param>
+		<param name="computationDomain">biofilm</param>
+		<param name="distMethod">true</param>
 		<param name="divRadius" unit="um">2.0</param>
 		<param name="divRadiusCV">0.1</param>
 		<param name="deathRadius" unit="um">0.2</param>
@@ -364,7 +381,7 @@
 		<initArea number="10">
 			<param name="birthday" unit="hour">0</param>
 			<coordinates x="0.0" y="0.0" z="0.0"/>
-			<coordinates x="1.0" y="264.0" z="0.0"/>
+			<coordinates x="1.0" y="128.0" z="0.0"/>
 		</initArea>
 	</species>
 
@@ -381,7 +398,8 @@
 		<particle name="dummyConsume">
 			<param name="mass" unit="fg">0.0</param>
 		</particle>
-		<param name="computationDomain">chemostat</param>
+		<param name="computationDomain">biofilm</param>
+		<param name="distMethod">true</param>
 		<param name="divRadius" unit="um">2.0</param>
 		<param name="divRadiusCV">0.1</param>
 		<param name="deathRadius" unit="um">0.1</param>
@@ -408,7 +426,7 @@
 		<initArea number="10">
 			<param name="birthday" unit="hour">0.0</param>
 			<coordinates x="0.0" y="0.0" z="0.0"/>
-			<coordinates x="1.0" y="264.0" z="0.0"/>
+			<coordinates x="1.0" y="128.0" z="0.0"/>
 		</initArea>
 	</species>
 </idynomics>

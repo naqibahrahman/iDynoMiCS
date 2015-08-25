@@ -847,6 +847,40 @@ public class Domain implements IsComputationDomain
 	}
 	
 	/**
+	 * \brief Calculate the volume of an agent in this domain, given its
+	 * radius.
+	 * 
+	 * <p>Takes care of sphere or cylinder.</p>
+	 * 
+	 * @param radius
+	 * @return
+	 */
+	public double agentVolume(double radius)
+	{
+		if ( Simulator.isChemostat || is3D )
+			return ExtraMath.volumeOfASphere(radius);
+		else
+			return ExtraMath.volumeOfACylinder(radius, length_Z);
+	}
+	
+	/**
+	 * \brief Calculate the radius of an agent in this domain, given its
+	 * volume.
+	 * 
+	 * <p>Takes care of sphere or cylinder.</p>
+	 * 
+	 * @param volume
+	 * @return
+	 */
+	public double agentRadius(double volume)
+	{
+		if ( Simulator.isChemostat || is3D )
+			return ExtraMath.radiusOfASphere(volume);
+		else
+			return ExtraMath.radiusOfACylinder(volume, length_Z);
+	}
+	
+	/**
 	 * \brief Used in testing to check the top of the boundary layer was calculated correctly
 	 * 
 	 * @author KA 210513
